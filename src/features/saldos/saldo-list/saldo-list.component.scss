@@ -1,0 +1,23 @@
+.page-container { max-width: 1200px; margin: 0 auto; }
+
+.filter-card {
+  border-radius: var(--radio-borde);
+  margin-bottom: 16px;
+  box-shadow: var(--sombra-suave);
+  .filters { display: flex; gap: 16px; padding: 8px 16px; flex-wrap: wrap; }
+  .search-field { flex: 1 1 300px; }
+  .estado-field { flex: 0 1 200px; }
+}
+
+.table-card { border-radius: var(--radio-borde); box-shadow: var(--sombra-suave); overflow: hidden; }
+
+.monto { font-weight: 600; color: var(--color-primario); }
+.saldo-ok { font-weight: 600; color: var(--color-secundario); }
+.saldo-bajo { font-weight: 600; color: var(--color-warning); }
+.saldo-agotado { font-weight: 600; color: var(--color-error); }
+
+.empty-state {
+  display: flex; flex-direction: column; align-items: center; padding: 48px; color: var(--color-gris);
+  mat-icon { font-size: 56px; margin-bottom: 12px; }
+  p { font-size: 15px; margin-bottom: 16px; }
+}

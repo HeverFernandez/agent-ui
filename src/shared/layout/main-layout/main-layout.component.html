@@ -1,0 +1,86 @@
+<mat-sidenav-container class="app-container">
+  <mat-sidenav
+    #sidenav
+    [opened]="sidenavOpened()"
+    [mode]="isHandset() ? 'over' : 'side'"
+    [fixedInViewport]="isHandset()"
+    class="app-sidenav"
+  >
+    <div class="sidenav-header">
+      <mat-icon class="logo-icon">account_balance</mat-icon>
+      <div class="logo-text">
+        <span class="logo-title">Nuvanta</span>
+        <span class="logo-subtitle">Agente Bancario</span>
+      </div>
+    </div>
+
+    <mat-nav-list>
+      @for (item of visibleMenuItems(); track item.route) {
+        <a
+          mat-list-item
+          (click)="navigateTo(item.route)"
+          [class.active-item]="currentTitle() === item.label"
+          class="nav-item"
+        >
+          <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+          <span matListItemTitle>{{ item.label }}</span>
+        </a>
+      }
+    </mat-nav-list>
+
+    <div class="sidenav-footer">
+      <div class="user-info-mini">
+        <div class="user-avatar-mini">{{ getInitials() }}</div>
+        <div class="user-details-mini">
+          <span class="user-name-mini">{{ getFullName() }}</span>
+          <span class="user-role-mini">{{ currentUser()?.rol }}</span>
+        </div>
+      </div>
+    </div>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="app-content">
+    <mat-toolbar class="app-toolbar" color="primary">
+      <button mat-icon-button (click)="toggleSidenav()" class="menu-toggle">
+        <mat-icon>menu</mat-icon>
+      </button>
+
+      <span class="toolbar-title">{{ currentTitle() }}</span>
+
+      <span class="toolbar-spacer"></span>
+
+      <button mat-icon-button matTooltip="Notificaciones" class="toolbar-action">
+        <mat-icon>notifications</mat-icon>
+      </button>
+
+      <button
+        mat-icon-button
+        [matMenuTriggerFor]="userMenu"
+        class="user-avatar-btn"
+        matTooltip="{{ getFullName() }}"
+      >
+        <div class="user-avatar">{{ getInitials() }}</div>
+      </button>
+
+      <mat-menu #userMenu="matMenu" xPosition="before">
+        <div class="menu-header">
+          <div class="menu-header-name">{{ getFullName() }}</div>
+          <div class="menu-header-email">{{ currentUser()?.correo }}</div>
+          <div class="menu-header-role">{{ currentUser()?.rol }}</div>
+        </div>
+        <button mat-menu-item (click)="navigateTo('/perfil')">
+          <mat-icon>person</mat-icon>
+          <span>Mi Perfil</span>
+        </button>
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Cerrar Sesión</span>
+        </button>
+      </mat-menu>
+    </mat-toolbar>
+
+    <div class="page-container">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

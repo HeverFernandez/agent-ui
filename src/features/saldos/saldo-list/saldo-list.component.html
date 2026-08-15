@@ -1,0 +1,109 @@
+<div class="page-container slide-in-up">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Saldos</h1>
+      <p class="page-subtitle">Asignación y gestión de saldos por entidad</p>
+    </div>
+    <button mat-raised-button color="primary" (click)="crear()">
+      <mat-icon>add</mat-icon>
+      Asignar Saldo
+    </button>
+  </div>
+
+  <mat-card class="filter-card">
+    <div class="filters">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Buscar</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Entidad o usuario..." />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="estado-field">
+        <mat-label>Estado</mat-label>
+        <mat-select [value]="filtroEstado()" (selectionChange)="filtrarPorEstado($event.value)">
+          <mat-option value="">Todos</mat-option>
+          <mat-option value="ACTIVO">Activo</mat-option>
+          <mat-option value="AGOTADO">Agotado</mat-option>
+          <mat-option value="VENCIDO">Vencido</mat-option>
+          <mat-option value="SUSPENDIDO">Suspendido</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </mat-card>
+
+  @if (loading()) {
+    <app-loading-spinner />
+  } @else {
+    <mat-card class="table-card">
+      <div class="table-responsive">
+        <table mat-table [dataSource]="dataSource" matSort>
+          <ng-container matColumnDef="idSaldo">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+            <td mat-cell *matCellDef="let saldo">{{ saldo.idSaldo }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="entidad">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Entidad</th>
+            <td mat-cell *matCellDef="let saldo">{{ saldo.entidadFinanciera?.nombreEntidad || 'Entidad #' + saldo.idEntidad }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="montoInicial">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Monto Inicial</th>
+            <td mat-cell *matCellDef="let saldo" class="monto">{{ formatCurrency(saldo.montoInicial) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="montoDisponible">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Disponible</th>
+            <td mat-cell *matCellDef="let saldo" [class]="getSaldoClass(saldo)">{{ formatCurrency(saldo.montoDisponible) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="fechaAsignacion">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Asignación</th>
+            <td mat-cell *matCellDef="let saldo">{{ formatDate(saldo.fechaAsignacion) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="estadoSaldo">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Estado</th>
+            <td mat-cell *matCellDef="let saldo">
+              <span class="estado-badge estado-{{ saldo.estadoSaldo.toLowerCase() }}">{{ saldo.estadoSaldo }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="acciones">
+            <th mat-header-cell *matHeaderCellDef>Acciones</th>
+            <td mat-cell *matCellDef="let saldo">
+              <button mat-icon-button matTooltip="Editar" (click)="editar(saldo)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button matTooltip="Eliminar" color="warn" (click)="eliminar(saldo)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
+
+      @if (dataSource.data.length === 0) {
+        <div class="empty-state">
+          <mat-icon>account_balance_wallet</mat-icon>
+          <p>No hay saldos asignados</p>
+          <button mat-raised-button color="primary" (click)="crear()">
+            <mat-icon>add</mat-icon>
+            Asignar primer saldo
+          </button>
+        </div>
+      }
+
+      <mat-paginator
+        [length]="totalElements"
+        [pageSize]="pageSize"
+        [pageIndex]="pageIndex"
+        [pageSizeOptions]="pageSizeOptions"
+        (page)="onPageChange($event)"
+      ></mat-paginator>
+    </mat-card>
+  }
+</div>

@@ -1,0 +1,76 @@
+<div class="page-container slide-in-up">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{{ isEdit() ? 'Editar Entidad' : 'Nueva Entidad' }}</h1>
+      <p class="page-subtitle">{{ isEdit() ? 'Modifique los datos de la entidad' : 'Registre una nueva entidad financiera' }}</p>
+    </div>
+    <button mat-button (click)="cancel()">
+      <mat-icon>arrow_back</mat-icon>
+      Volver
+    </button>
+  </div>
+
+  @if (loading()) {
+    <app-loading-spinner />
+  } @else {
+    <mat-card class="form-card">
+      <form [formGroup]="form" (ngSubmit)="save()" class="entidad-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nombre de la Entidad</mat-label>
+          <mat-icon matPrefix>account_balance</mat-icon>
+          <input matInput formControlName="nombreEntidad" placeholder="Ej: Banco de Crédito" />
+          @if (form.get('nombreEntidad')?.hasError('required') && form.get('nombreEntidad')?.touched) {
+            <mat-error>El nombre es obligatorio</mat-error>
+          }
+          @if (form.get('nombreEntidad')?.hasError('minlength') && form.get('nombreEntidad')?.touched) {
+            <mat-error>Mínimo 3 caracteres</mat-error>
+          }
+        </mat-form-field>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Tipo de Entidad</mat-label>
+            <mat-icon matPrefix>category</mat-icon>
+            <mat-select formControlName="tipoEntidad">
+              <mat-option value="BANCO">Banco</mat-option>
+              <mat-option value="SERVICIO">Servicio</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Código</mat-label>
+            <mat-icon matPrefix>code</mat-icon>
+            <input matInput formControlName="codigoEntidad" placeholder="Ej: BCP001" />
+            @if (form.get('codigoEntidad')?.hasError('required') && form.get('codigoEntidad')?.touched) {
+              <mat-error>El código es obligatorio</mat-error>
+            }
+            @if (form.get('codigoEntidad')?.hasError('minlength') && form.get('codigoEntidad')?.touched) {
+              <mat-error>Mínimo 2 caracteres</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Estado</mat-label>
+          <mat-icon matPrefix>toggle_on</mat-icon>
+          <mat-select formControlName="estadoEntidad">
+            <mat-option value="ACTIVO">Activo</mat-option>
+            <mat-option value="INACTIVO">Inactivo</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button mat-button type="button" (click)="cancel()">Cancelar</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="saving()">
+            @if (saving()) {
+              <mat-progress-spinner diameter="20" mode="indeterminate"></mat-progress-spinner>
+            } @else {
+              <mat-icon>save</mat-icon>
+              {{ isEdit() ? 'Actualizar' : 'Crear' }}
+            }
+          </button>
+        </div>
+      </form>
+    </mat-card>
+  }
+</div>

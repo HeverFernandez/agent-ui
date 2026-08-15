@@ -1,0 +1,125 @@
+<div class="page-container slide-in-up">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{{ isEdit() ? 'Editar Operación' : 'Nueva Operación' }}</h1>
+      <p class="page-subtitle">{{ isEdit() ? 'Modifique los datos de la operación' : 'Registre una nueva operación bancaria' }}</p>
+    </div>
+    <button mat-button (click)="cancel()"><mat-icon>arrow_back</mat-icon> Volver</button>
+  </div>
+
+  @if (loading()) {
+    <app-loading-spinner />
+  } @else {
+    <mat-card class="form-card">
+      <form [formGroup]="form" (ngSubmit)="save()" class="operacion-form">
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Tipo de Operación</mat-label>
+            <mat-icon matPrefix>swap_horiz</mat-icon>
+            <mat-select formControlName="tipoOperacion" (selectionChange)="onTipoChange()">
+              <mat-option value="RETIRO">Retiro</mat-option>
+              <mat-option value="DEPOSITO">Depósito</mat-option>
+              <mat-option value="PAGO_SERVICIO">Pago de Servicio</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Entidad Financiera</mat-label>
+            <mat-icon matPrefix>account_balance</mat-icon>
+            <mat-select formControlName="idEntidad">
+              @for (entidad of entidades(); track entidad.idEntidad) {
+                <mat-option [value]="entidad.idEntidad">{{ entidad.nombreEntidad }}</mat-option>
+              }
+            </mat-select>
+            @if (form.get('idEntidad')?.hasError('required') && form.get('idEntidad')?.touched) {
+              <mat-error>Seleccione una entidad</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Monto</mat-label>
+            <mat-icon matPrefix>payments</mat-icon>
+            <input matInput type="number" formControlName="montoOperacion" step="0.01" min="0.01" />
+            @if (form.get('montoOperacion')?.hasError('required') && form.get('montoOperacion')?.touched) {
+              <mat-error>El monto es obligatorio</mat-error>
+            }
+            @if (form.get('montoOperacion')?.hasError('min') && form.get('montoOperacion')?.touched) {
+              <mat-error>Debe ser mayor a 0</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Fecha</mat-label>
+            <mat-icon matPrefix>event</mat-icon>
+            <input matInput type="date" formControlName="fechaOperacion" />
+            @if (form.get('fechaOperacion')?.hasError('required') && form.get('fechaOperacion')?.touched) {
+              <mat-error>La fecha es obligatoria</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Número de Referencia</mat-label>
+            <mat-icon matPrefix>receipt</mat-icon>
+            <input matInput formControlName="numeroReferencia" placeholder="Ej: REF-001234" />
+            @if (form.get('numeroReferencia')?.hasError('required') && form.get('numeroReferencia')?.touched) {
+              <mat-error>El número de referencia es obligatorio</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Estado</mat-label>
+            <mat-icon matPrefix>toggle_on</mat-icon>
+            <mat-select formControlName="estadoOperacion">
+              <mat-option value="PENDIENTE">Pendiente</mat-option>
+              <mat-option value="COMPLETADA">Completada</mat-option>
+              <mat-option value="ANULADA">Anulada</mat-option>
+              <mat-option value="FALLIDA">Fallida</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        @if (form.get('tipoOperacion')?.value === 'PAGO_SERVICIO') {
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Servicio Pagado</mat-label>
+            <mat-icon matPrefix>receipt_long</mat-icon>
+            <input matInput formControlName="servicioPagado" placeholder="Ej: Agua, Luz, Internet..." />
+          </mat-form-field>
+        }
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Descripción</mat-label>
+          <mat-icon matPrefix>notes</mat-icon>
+          <textarea matInput formControlName="descripcionOperacion" rows="3" placeholder="Descripción de la operación..."></textarea>
+          @if (form.get('descripcionOperacion')?.hasError('required') && form.get('descripcionOperacion')?.touched) {
+            <mat-error>La descripción es obligatoria</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Usuario Registro</mat-label>
+          <mat-icon matPrefix>person</mat-icon>
+          <input matInput formControlName="usuarioRegistro" />
+          @if (form.get('usuarioRegistro')?.hasError('required') && form.get('usuarioRegistro')?.touched) {
+            <mat-error>El usuario es obligatorio</mat-error>
+          }
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button mat-button type="button" (click)="cancel()">Cancelar</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="saving()">
+            @if (saving()) {
+              <mat-progress-spinner diameter="20" mode="indeterminate"></mat-progress-spinner>
+            } @else {
+              <mat-icon>save</mat-icon>
+              {{ isEdit() ? 'Actualizar' : 'Registrar' }}
+            }
+          </button>
+        </div>
+      </form>
+    </mat-card>
+  }
+</div>

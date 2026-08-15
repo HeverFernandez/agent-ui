@@ -1,0 +1,228 @@
+.page-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #0D47A1;
+  margin: 0;
+}
+
+.page-subtitle {
+  color: #666;
+  margin: 4px 0 0;
+  font-size: 14px;
+}
+
+.export-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.filter-card {
+  border-radius: 12px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  .filters {
+    display: flex;
+    gap: 12px;
+    padding: 8px 16px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .filter-field {
+    flex: 1 1 180px;
+  min-width: 160px;
+  }
+
+  .filter-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  .stat-icon {
+    font-size: 40px;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+  }
+
+  .stat-value {
+    display: block;
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a1a2e;
+  }
+
+  .stat-label {
+    display: block;
+    font-size: 13px;
+    color: #888;
+    margin-top: 2px;
+  }
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.chart-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #0D47A1;
+    margin: 0 0 16px;
+    padding: 16px 16px 0;
+  }
+
+  .chart-container {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  &.chart-full {
+    grid-column: 1 / -1;
+  }
+}
+
+.table-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  margin-bottom: 24px;
+
+  .table-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #0D47A1;
+    margin: 0;
+    padding: 16px 16px 0;
+  }
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.monto {
+  font-weight: 600;
+  color: #0D47A1;
+}
+
+.tipo-badge {
+  display: inline-flex;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+
+  &.tipo-retiro {
+    background: #ffebee;
+    color: #c62828;
+  }
+  &.tipo-deposito {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+  &.tipo-pago_servicio {
+    background: #e3f2fd;
+    color: #1565c0;
+  }
+}
+
+.estado-badge {
+  display: inline-flex;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+
+  &.estado-completada {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+  &.estado-pendiente {
+    background: #fff8e1;
+    color: #f57f17;
+  }
+  &.estado-anulada {
+    background: #f3e5f5;
+    color: #7b1fa2;
+  }
+  &.estado-fallida {
+    background: #ffebee;
+    color: #c62828;
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px;
+  color: #999;
+
+  mat-icon {
+    font-size: 56px;
+    margin-bottom: 12px;
+  }
+
+  p {
+    font-size: 15px;
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-card .filters {
+    flex-direction: column;
+
+    .filter-actions {
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
+}

@@ -1,0 +1,90 @@
+<div class="profile-page slide-in-up">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Mi Perfil</h1>
+      <p class="page-subtitle">Gestione su información personal</p>
+    </div>
+  </div>
+
+  <div class="profile-grid">
+    <mat-card class="profile-card-info">
+      <div class="profile-avatar-section">
+        <div class="profile-avatar">{{ getInitials() }}</div>
+        <h2 class="profile-name">{{ getFullName() }}</h2>
+        <span class="estado-badge" [class.estado-activo]="true">
+          {{ currentUser()?.estado }}
+        </span>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="profile-meta">
+        <div class="meta-item">
+          <mat-icon>email</mat-icon>
+          <div>
+            <span class="meta-label">Correo</span>
+            <span class="meta-value">{{ currentUser()?.correo }}</span>
+          </div>
+        </div>
+        <div class="meta-item">
+          <mat-icon>badge</mat-icon>
+          <div>
+            <span class="meta-label">Rol</span>
+            <span class="meta-value">{{ currentUser()?.rol }}</span>
+          </div>
+        </div>
+        <div class="meta-item">
+          <mat-icon>event</mat-icon>
+          <div>
+            <span class="meta-label">Fecha de registro</span>
+            <span class="meta-value">{{ currentUser()?.fechaRegistro | date: 'dd/MM/yyyy' }}</span>
+          </div>
+        </div>
+      </div>
+    </mat-card>
+
+    <mat-card class="profile-card-form">
+      <h3 class="form-title">Editar información</h3>
+
+      <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="profile-form">
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre</mat-label>
+            <mat-icon matPrefix>person</mat-icon>
+            <input matInput formControlName="nombre" />
+            @if (profileForm.get('nombre')?.hasError('required') && profileForm.get('nombre')?.touched) {
+              <mat-error>El nombre es obligatorio</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Apellido</mat-label>
+            <mat-icon matPrefix>person</mat-icon>
+            <input matInput formControlName="apellido" />
+            @if (profileForm.get('apellido')?.hasError('required') && profileForm.get('apellido')?.touched) {
+              <mat-error>El apellido es obligatorio</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Correo electrónico</mat-label>
+          <mat-icon matPrefix>email</mat-icon>
+          <input matInput formControlName="correo" />
+          <mat-hint>El correo no puede ser modificado</mat-hint>
+        </mat-form-field>
+
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          class="save-button"
+          [disabled]="loading()"
+        >
+          <mat-icon>save</mat-icon>
+          Guardar cambios
+        </button>
+      </form>
+    </mat-card>
+  </div>
+</div>

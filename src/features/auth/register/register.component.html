@@ -1,0 +1,105 @@
+<div class="register-page">
+  <div class="register-bg">
+    <div class="register-bg-pattern"></div>
+  </div>
+
+  <mat-card class="register-card fade-in">
+    <div class="register-header">
+      <mat-icon class="register-logo">person_add</mat-icon>
+      <h1 class="register-title">Crear Cuenta</h1>
+      <p class="register-subtitle">Regístrese como agente bancario</p>
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="submit()" class="register-form">
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Nombre</mat-label>
+          <mat-icon matPrefix>person</mat-icon>
+          <input matInput formControlName="nombre" />
+          @if (registerForm.get('nombre')?.hasError('required') && registerForm.get('nombre')?.touched) {
+            <mat-error>El nombre es obligatorio</mat-error>
+          }
+          @if (registerForm.get('nombre')?.hasError('minlength') && registerForm.get('nombre')?.touched) {
+            <mat-error>Mínimo 2 caracteres</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Apellido</mat-label>
+          <mat-icon matPrefix>person</mat-icon>
+          <input matInput formControlName="apellido" />
+          @if (registerForm.get('apellido')?.hasError('required') && registerForm.get('apellido')?.touched) {
+            <mat-error>El apellido es obligatorio</mat-error>
+          }
+          @if (registerForm.get('apellido')?.hasError('minlength') && registerForm.get('apellido')?.touched) {
+            <mat-error>Mínimo 2 caracteres</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Correo electrónico</mat-label>
+        <mat-icon matPrefix>email</mat-icon>
+        <input matInput type="email" formControlName="correo" />
+        @if (registerForm.get('correo')?.hasError('required') && registerForm.get('correo')?.touched) {
+          <mat-error>El correo es obligatorio</mat-error>
+        }
+        @if (registerForm.get('correo')?.hasError('email') && registerForm.get('correo')?.touched) {
+          <mat-error>Ingrese un correo válido</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Contraseña</mat-label>
+        <mat-icon matPrefix>lock</mat-icon>
+        <input
+          matInput
+          [type]="hidePassword() ? 'password' : 'text'"
+          formControlName="clave"
+        />
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          (click)="togglePassword()"
+        >
+          <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        @if (registerForm.get('clave')?.hasError('required') && registerForm.get('clave')?.touched) {
+          <mat-error>La contraseña es obligatoria</mat-error>
+        }
+        @if (registerForm.get('clave')?.hasError('minlength') && registerForm.get('clave')?.touched) {
+          <mat-error>Mínimo 6 caracteres</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Rol</mat-label>
+        <mat-icon matPrefix>badge</mat-icon>
+        <mat-select formControlName="rol">
+          <mat-option value="AGENTE">Agente</mat-option>
+          <mat-option value="ADMINISTRADOR">Administrador</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button
+        mat-raised-button
+        type="submit"
+        color="primary"
+        class="register-button"
+        [disabled]="loading()"
+      >
+        @if (loading()) {
+          <mat-progress-spinner diameter="20" mode="indeterminate"></mat-progress-spinner>
+        } @else {
+          Registrarse
+        }
+      </button>
+    </form>
+
+    <div class="login-link">
+      ¿Ya tiene cuenta?
+      <a routerLink="/login">Inicie sesión aquí</a>
+    </div>
+  </mat-card>
+</div>

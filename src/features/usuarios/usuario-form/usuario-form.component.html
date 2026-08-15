@@ -1,0 +1,84 @@
+<div class="page-container slide-in-up">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{{ isEdit() ? 'Editar Usuario' : 'Nuevo Usuario' }}</h1>
+      <p class="page-subtitle">{{ isEdit() ? 'Modifique los datos del usuario' : 'Registre un nuevo usuario en el sistema' }}</p>
+    </div>
+    <button mat-button (click)="cancel()"><mat-icon>arrow_back</mat-icon> Volver</button>
+  </div>
+
+  @if (loading()) {
+    <app-loading-spinner />
+  } @else {
+    <mat-card class="form-card">
+      <form [formGroup]="form" (ngSubmit)="save()" class="usuario-form">
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre</mat-label>
+            <mat-icon matPrefix>person</mat-icon>
+            <input matInput formControlName="nombre" />
+            @if (form.get('nombre')?.hasError('required') && form.get('nombre')?.touched) { <mat-error>El nombre es obligatorio</mat-error> }
+            @if (form.get('nombre')?.hasError('minlength') && form.get('nombre')?.touched) { <mat-error>Mínimo 2 caracteres</mat-error> }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Apellido</mat-label>
+            <mat-icon matPrefix>person</mat-icon>
+            <input matInput formControlName="apellido" />
+            @if (form.get('apellido')?.hasError('required') && form.get('apellido')?.touched) { <mat-error>El apellido es obligatorio</mat-error> }
+            @if (form.get('apellido')?.hasError('minlength') && form.get('apellido')?.touched) { <mat-error>Mínimo 2 caracteres</mat-error> }
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Correo Electrónico</mat-label>
+          <mat-icon matPrefix>email</mat-icon>
+          <input matInput type="email" formControlName="correo" />
+          @if (form.get('correo')?.hasError('required') && form.get('correo')?.touched) { <mat-error>El correo es obligatorio</mat-error> }
+          @if (form.get('correo')?.hasError('email') && form.get('correo')?.touched) { <mat-error>Correo inválido</mat-error> }
+        </mat-form-field>
+
+        @if (!isEdit()) {
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Contraseña</mat-label>
+            <mat-icon matPrefix>lock</mat-icon>
+            <input matInput type="password" formControlName="clave" />
+            @if (form.get('clave')?.hasError('minlength') && form.get('clave')?.touched) { <mat-error>Mínimo 6 caracteres</mat-error> }
+          </mat-form-field>
+        }
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Rol</mat-label>
+            <mat-icon matPrefix>badge</mat-icon>
+            <mat-select formControlName="rol">
+              <mat-option value="ADMINISTRADOR">Administrador</mat-option>
+              <mat-option value="AGENTE">Agente</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Estado</mat-label>
+            <mat-icon matPrefix>toggle_on</mat-icon>
+            <mat-select formControlName="estado">
+              <mat-option value="ACTIVO">Activo</mat-option>
+              <mat-option value="INACTIVO">Inactivo</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button mat-button type="button" (click)="cancel()">Cancelar</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="saving()">
+            @if (saving()) {
+              <mat-progress-spinner diameter="20" mode="indeterminate"></mat-progress-spinner>
+            } @else {
+              <mat-icon>save</mat-icon>
+              {{ isEdit() ? 'Actualizar' : 'Crear' }}
+            }
+          </button>
+        </div>
+      </form>
+    </mat-card>
+  }
+</div>

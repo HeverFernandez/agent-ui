@@ -1,0 +1,113 @@
+<div class="page-container slide-in-up">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{{ isEdit() ? 'Editar Saldo' : 'Asignar Saldo' }}</h1>
+      <p class="page-subtitle">{{ isEdit() ? 'Modifique los datos del saldo' : 'Asigne un nuevo saldo a una entidad' }}</p>
+    </div>
+    <button mat-button (click)="cancel()">
+      <mat-icon>arrow_back</mat-icon>
+      Volver
+    </button>
+  </div>
+
+  @if (loading()) {
+    <app-loading-spinner />
+  } @else {
+    <mat-card class="form-card">
+      <form [formGroup]="form" (ngSubmit)="save()" class="saldo-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Entidad Financiera</mat-label>
+          <mat-icon matPrefix>account_balance</mat-icon>
+          <mat-select formControlName="idEntidad">
+            @for (entidad of entidades(); track entidad.idEntidad) {
+              <mat-option [value]="entidad.idEntidad">{{ entidad.nombreEntidad }} ({{ entidad.codigoEntidad }})</mat-option>
+            }
+          </mat-select>
+          @if (form.get('idEntidad')?.hasError('required') && form.get('idEntidad')?.touched) {
+            <mat-error>Seleccione una entidad</mat-error>
+          }
+        </mat-form-field>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Monto Inicial</mat-label>
+            <mat-icon matPrefix>payments</mat-icon>
+            <input matInput type="number" formControlName="montoInicial" (input)="onMontoInicialChange()" step="0.01" min="0" />
+            @if (form.get('montoInicial')?.hasError('required') && form.get('montoInicial')?.touched) {
+              <mat-error>El monto inicial es obligatorio</mat-error>
+            }
+            @if (form.get('montoInicial')?.hasError('min') && form.get('montoInicial')?.touched) {
+              <mat-error>Debe ser mayor a 0</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Monto Disponible</mat-label>
+            <mat-icon matPrefix>account_balance_wallet</mat-icon>
+            <input matInput type="number" formControlName="montoDisponible" step="0.01" min="0" />
+            @if (form.get('montoDisponible')?.hasError('required') && form.get('montoDisponible')?.touched) {
+              <mat-error>El monto disponible es obligatorio</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Fecha de Asignación</mat-label>
+            <mat-icon matPrefix>event</mat-icon>
+            <input matInput type="date" formControlName="fechaAsignacion" />
+            @if (form.get('fechaAsignacion')?.hasError('required') && form.get('fechaAsignacion')?.touched) {
+              <mat-error>La fecha es obligatoria</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Fecha de Vencimiento</mat-label>
+            <mat-icon matPrefix>event_busy</mat-icon>
+            <input matInput type="date" formControlName="fechaVencimiento" />
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Usuario Asignador</mat-label>
+            <mat-icon matPrefix>person</mat-icon>
+            <input matInput formControlName="usuarioAsignador" />
+            @if (form.get('usuarioAsignador')?.hasError('required') && form.get('usuarioAsignador')?.touched) {
+              <mat-error>El usuario asignador es obligatorio</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Estado</mat-label>
+            <mat-icon matPrefix>toggle_on</mat-icon>
+            <mat-select formControlName="estadoSaldo">
+              <mat-option value="ACTIVO">Activo</mat-option>
+              <mat-option value="AGOTADO">Agotado</mat-option>
+              <mat-option value="VENCIDO">Vencido</mat-option>
+              <mat-option value="SUSPENDIDO">Suspendido</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Observaciones</mat-label>
+          <mat-icon matPrefix>notes</mat-icon>
+          <textarea matInput formControlName="observaciones" rows="3"></textarea>
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button mat-button type="button" (click)="cancel()">Cancelar</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="saving()">
+            @if (saving()) {
+              <mat-progress-spinner diameter="20" mode="indeterminate"></mat-progress-spinner>
+            } @else {
+              <mat-icon>save</mat-icon>
+              {{ isEdit() ? 'Actualizar' : 'Asignar' }}
+            }
+          </button>
+        </div>
+      </form>
+    </mat-card>
+  }
+</div>

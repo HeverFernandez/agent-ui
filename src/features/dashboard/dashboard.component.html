@@ -1,0 +1,120 @@
+<div class="dashboard-page">
+  <div class="welcome-banner slide-in-up">
+    <div class="welcome-text">
+      <h1>Bienvenido, {{ getFullName() }}</h1>
+      <p>Resumen general del sistema de agente bancario</p>
+    </div>
+    <div class="welcome-icon">
+      <mat-icon>account_balance</mat-icon>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <app-loading-spinner />
+  } @else {
+    <div class="summary-grid slide-in-up">
+      @for (card of getSummaryCards(); track card.label) {
+        <mat-card class="summary-card hover-card" (click)="navigateTo(card.route)">
+          <div class="summary-icon" [style.background-color]="card.bgColor">
+            <mat-icon [style.color]="card.color">{{ card.icon }}</mat-icon>
+          </div>
+          <div class="summary-content">
+            <span class="summary-value" [style.color]="card.color">{{ card.value }}</span>
+            <span class="summary-label">{{ card.label }}</span>
+          </div>
+        </mat-card>
+      }
+    </div>
+
+    <div class="dashboard-grid">
+      <mat-card class="dashboard-card slide-in-up">
+        <div class="card-header">
+          <div class="card-header-title">
+            <mat-icon>swap_horiz</mat-icon>
+            <h3>Operaciones Recientes</h3>
+          </div>
+          <button mat-button (click)="navigateTo('/operaciones')">
+            Ver todas
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+
+        @if (recentOperaciones().length > 0) {
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Tipo</th>
+                  <th>Monto</th>
+                  <th>Estado</th>
+                  <th>Fecha</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (op of recentOperaciones(); track op.idOperacion) {
+                  <tr>
+                    <td>
+                      <span class="tipo-badge tipo-{{ op.tipoOperacion.toLowerCase() }}">
+                        {{ op.tipoOperacion === 'PAGO_SERVICIO' ? 'PAGO' : op.tipoOperacion }}
+                      </span>
+                    </td>
+                    <td class="monto">{{ formatCurrency(op.montoOperacion) }}</td>
+                    <td>
+                      <span class="estado-badge estado-{{ op.estadoOperacion.toLowerCase() }}">
+                        {{ op.estadoOperacion }}
+                      </span>
+                    </td>
+                    <td>{{ formatDate(op.fechaOperacion) }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <div class="empty-state">
+            <mat-icon>inbox</mat-icon>
+            <p>No hay operaciones recientes</p>
+          </div>
+        }
+      </mat-card>
+
+      <mat-card class="dashboard-card slide-in-up">
+        <div class="card-header">
+          <div class="card-header-title">
+            <mat-icon>account_balance_wallet</mat-icon>
+            <h3>Saldos por Entidad</h3>
+          </div>
+          <button mat-button (click)="navigateTo('/saldos')">
+            Ver todos
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+
+        @if (topSaldos().length > 0) {
+          <div class="saldos-list">
+            @for (saldo of topSaldos(); track saldo.idSaldo) {
+              <div class="saldo-item">
+                <div class="saldo-info">
+                  <span class="saldo-entidad">
+                    {{ saldo.entidadFinanciera?.nombreEntidad || 'Entidad #' + saldo.idEntidad }}
+                  </span>
+                  <span class="saldo-estado estado-badge estado-{{ saldo.estadoSaldo.toLowerCase() }}">
+                    {{ saldo.estadoSaldo }}
+                  </span>
+                </div>
+                <div class="saldo-monto">
+                  {{ formatCurrency(saldo.montoDisponible) }}
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="empty-state">
+            <mat-icon>account_balance_wallet</mat-icon>
+            <p>No hay saldos asignados</p>
+          </div>
+        }
+      </mat-card>
+    </div>
+  }
+</div>
