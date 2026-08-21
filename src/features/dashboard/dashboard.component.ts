@@ -67,23 +67,29 @@ export class DashboardComponent implements OnInit {
     }).subscribe({
       next: ({ entidades, saldos, operaciones }) => {
         if (entidades) {
-          const activas = entidades.content.filter((e: EntidadFinanciera) => e.estadoEntidad === 'ACTIVO');
+          const activas = entidades.data.content.filter(
+            (e: EntidadFinanciera) => e.estadoEntidad === "ACTIVO",
+          );
           this.totalEntidades.set(activas.length);
         }
 
         if (saldos) {
-          const total = saldos.content.reduce((sum: number, s: Saldo) => sum + (s.montoDisponible || 0), 0);
+          const total = saldos.data.content.reduce(
+            (sum: number, s: Saldo) => sum + (s.montoDisponible || 0),
+            0,
+          );
           this.totalSaldo.set(total);
-          this.topSaldos.set(saldos.content.slice(0, 5));
+          this.topSaldos.set(saldos.data.content.slice(0, 5));
         }
 
         if (operaciones) {
-          this.recentOperaciones.set(operaciones.content);
-          this.totalOperaciones.set(operaciones.totalElements);
+          this.recentOperaciones.set(operaciones.data.content);
+          this.totalOperaciones.set(operaciones.data.totalElements);
 
-          const today = new Date().toISOString().split('T')[0];
-          const opsHoy = operaciones.content.filter((o: Operacion) =>
-            o.fechaOperacion && o.fechaOperacion.startsWith(today)
+          const today = new Date().toISOString().split("T")[0];
+          const opsHoy = operaciones.data.content.filter(
+            (o: Operacion) =>
+              o.fechaOperacion && o.fechaOperacion.startsWith(today),
           );
           this.operacionesHoy.set(opsHoy.length);
         }

@@ -83,10 +83,10 @@ export class ReporteComponent implements OnInit {
         let sld: Saldo[] = [];
 
         if (operaciones) {
-          ops = operaciones.content;
+          ops = operaciones.data.content;
           if (this.fechaInicio() && this.fechaFin()) {
             ops = ops.filter((o) => {
-              const fecha = o.fechaOperacion?.split('T')[0] || '';
+              const fecha = o.fechaOperacion?.split("T")[0] || "";
               return fecha >= this.fechaInicio() && fecha <= this.fechaFin();
             });
           }
@@ -96,7 +96,7 @@ export class ReporteComponent implements OnInit {
         }
 
         if (saldos) {
-          sld = saldos.content;
+          sld = saldos.data.content;
           if (this.entidadFiltro()) {
             sld = sld.filter((s) => s.idEntidad === +this.entidadFiltro());
           }

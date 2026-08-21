@@ -15,11 +15,16 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { EntidadService } from '../../../core/services/entidad.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { DialogService } from '../../../shared/services/dialog.service';
-import { EntidadFinanciera, TipoEntidad, PageResponse } from '../../../core/models/models';
-import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+import {
+  EntidadFinanciera,
+  TipoEntidad,
+  PageResponse,
+  ApiResponse,
+} from "../../../core/models/models";
+import { LoadingSpinnerComponent } from "../../../shared/components/loading-spinner/loading-spinner.component";
 
 @Component({
-  selector: 'app-entidad-list',
+  selector: "app-entidad-list",
   standalone: true,
   imports: [
     CommonModule,
@@ -36,8 +41,8 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
     MatProgressSpinnerModule,
     LoadingSpinnerComponent,
   ],
-  templateUrl: './entidad-list.component.html',
-  styleUrls: ['./entidad-list.component.scss'],
+  templateUrl: "./entidad-list.component.html",
+  styleUrls: ["./entidad-list.component.scss"],
 })
 export class EntidadListComponent implements OnInit {
   private entidadService = inject(EntidadService);
@@ -47,15 +52,23 @@ export class EntidadListComponent implements OnInit {
 
   loading = signal(true);
   dataSource = new MatTableDataSource<EntidadFinanciera>([]);
-  displayedColumns: string[] = ['idEntidad', 'nombreEntidad', 'tipoEntidad', 'codigoEntidad', 'estadoEntidad', 'fechaRegistro', 'acciones'];
+  displayedColumns: string[] = [
+    "idEntidad",
+    "nombreEntidad",
+    "tipoEntidad",
+    "codigoEntidad",
+    "estadoEntidad",
+    "fechaRegistro",
+    "acciones",
+  ];
 
   totalElements = 0;
   pageSize = 10;
   pageIndex = 0;
   pageSizeOptions: number[] = [5, 10, 25, 50];
 
-  filtroTipo = signal<TipoEntidad | ''>('');
-  searchText = signal('');
+  filtroTipo = signal<TipoEntidad | "">("");
+  searchText = signal("");
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -67,9 +80,9 @@ export class EntidadListComponent implements OnInit {
   loadEntidades(): void {
     this.loading.set(true);
     this.entidadService.listar(this.pageIndex, this.pageSize).subscribe({
-      next: (response: PageResponse<EntidadFinanciera>) => {
-        this.dataSource.data = response.content;
-        this.totalElements = response.totalElements;
+      next: (response: ApiResponse<PageResponse<EntidadFinanciera>>) => {
+        this.dataSource.data = response.data.content;
+        this.totalElements = response.data.totalElements;
         this.loading.set(false);
       },
       error: () => {
@@ -91,26 +104,26 @@ export class EntidadListComponent implements OnInit {
   }
 
   crear(): void {
-    this.router.navigate(['/entidades/nuevo']);
+    this.router.navigate(["/entidades/nuevo"]);
   }
 
   editar(entidad: EntidadFinanciera): void {
-    this.router.navigate(['/entidades/editar', entidad.idEntidad]);
+    this.router.navigate(["/entidades/editar", entidad.idEntidad]);
   }
 
   eliminar(entidad: EntidadFinanciera): void {
     this.dialogService
       .confirmar(
-        'Eliminar Entidad',
+        "Eliminar Entidad",
         `¿Está seguro de eliminar la entidad "${entidad.nombreEntidad}"? Esta acción no se puede deshacer.`,
-        'Eliminar',
-        'Cancelar'
+        "Eliminar",
+        "Cancelar",
       )
       .subscribe((confirmado) => {
         if (confirmado && entidad.idEntidad) {
           this.entidadService.eliminar(entidad.idEntidad).subscribe({
             next: () => {
-              this.notification.success('Entidad eliminada correctamente');
+              this.notification.success("Entidad eliminada correctamente");
               this.loadEntidades();
             },
           });
@@ -118,31 +131,33 @@ export class EntidadListComponent implements OnInit {
       });
   }
 
-  filtrarPorTipo(tipo: TipoEntidad | ''): void {
+  filtrarPorTipo(tipo: TipoEntidad | ""): void {
     this.filtroTipo.set(tipo);
-    if (tipo === '') {
+    if (tipo === "") {
       this.loadEntidades();
     } else {
       this.loading.set(true);
-      this.entidadService.listarPorTipo(tipo as TipoEntidad, this.pageIndex, this.pageSize).subscribe({
-        next: (response) => {
-          this.dataSource.data = response.content;
-          this.totalElements = response.totalElements;
-          this.loading.set(false);
-        },
-        error: () => {
-          this.loading.set(false);
-        },
-      });
+      this.entidadService
+        .listarPorTipo(tipo as TipoEntidad, this.pageIndex, this.pageSize)
+        .subscribe({
+          next: (response) => {
+            this.dataSource.data = response.content;
+            this.totalElements = response.totalElements;
+            this.loading.set(false);
+          },
+          error: () => {
+            this.loading.set(false);
+          },
+        });
     }
   }
 
   formatDate(date: string | null | undefined): string {
-    if (!date) return '-';
-    return new Date(date).toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
+    if (!date) return "-";
+    return new Date(date).toLocaleDateString("es-ES", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
     });
   }
 }

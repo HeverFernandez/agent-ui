@@ -17,20 +17,38 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { OperacionService } from '../../../core/services/operacion.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { DialogService } from '../../../shared/services/dialog.service';
-import { Operacion, TipoOperacion, EstadoOperacion, FiltroOperacion, PageResponse } from '../../../core/models/models';
-import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+import {
+  Operacion,
+  TipoOperacion,
+  EstadoOperacion,
+  FiltroOperacion,
+  PageResponse,
+  ApiResponse,
+} from "../../../core/models/models";
+import { LoadingSpinnerComponent } from "../../../shared/components/loading-spinner/loading-spinner.component";
 
 @Component({
-  selector: 'app-operacion-list',
+  selector: "app-operacion-list",
   standalone: true,
   imports: [
-    CommonModule, MatTableModule, MatPaginatorModule, MatSortModule,
-    MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule,
-    MatIconModule, MatCardModule, MatTooltipModule, MatProgressSpinnerModule,
-    MatDatepickerModule, MatNativeDateModule, LoadingSpinnerComponent,
+    CommonModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatIconModule,
+    MatCardModule,
+    MatTooltipModule,
+    MatProgressSpinnerModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    LoadingSpinnerComponent,
   ],
-  templateUrl: './operacion-list.component.html',
-  styleUrls: ['./operacion-list.component.scss'],
+  templateUrl: "./operacion-list.component.html",
+  styleUrls: ["./operacion-list.component.scss"],
 })
 export class OperacionListComponent implements OnInit {
   private operacionService = inject(OperacionService);
@@ -40,38 +58,56 @@ export class OperacionListComponent implements OnInit {
 
   loading = signal(true);
   dataSource = new MatTableDataSource<Operacion>([]);
-  displayedColumns: string[] = ['idOperacion', 'tipoOperacion', 'entidad', 'montoOperacion', 'numeroReferencia', 'estadoOperacion', 'fechaOperacion', 'acciones'];
+  displayedColumns: string[] = [
+    "idOperacion",
+    "tipoOperacion",
+    "entidad",
+    "montoOperacion",
+    "numeroReferencia",
+    "estadoOperacion",
+    "fechaOperacion",
+    "acciones",
+  ];
 
   totalElements = 0;
   pageSize = 10;
   pageIndex = 0;
   pageSizeOptions: number[] = [5, 10, 25, 50];
 
-  filtroTipo = signal<TipoOperacion | ''>('');
-  filtroEstado = signal<EstadoOperacion | ''>('');
-  filtroEntidad = signal<number | ''>('');
-  fechaInicio = signal('');
-  fechaFin = signal('');
+  filtroTipo = signal<TipoOperacion | "">("");
+  filtroEstado = signal<EstadoOperacion | "">("");
+  filtroEntidad = signal<number | "">("");
+  fechaInicio = signal("");
+  fechaFin = signal("");
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  ngOnInit(): void { this.loadOperaciones(); }
+  ngOnInit(): void {
+    this.loadOperaciones();
+  }
 
   loadOperaciones(): void {
     this.loading.set(true);
     this.operacionService.listar(this.pageIndex, this.pageSize).subscribe({
-      next: (response: PageResponse<Operacion>) => {
-        this.dataSource.data = response.content;
-        this.totalElements = response.totalElements;
+      next: (response: ApiResponse<PageResponse<Operacion>>) => {
+        this.dataSource.data = response.data.content;
+        this.totalElements = response.data.totalElements;
         this.loading.set(false);
       },
-      error: () => { this.loading.set(false); },
+      error: () => {
+        this.loading.set(false);
+      },
     });
   }
 
   buscar(): void {
-    const tieneFiltros = this.filtroTipo() || this.filtroEstado() || this.filtroEntidad() || this.fechaInicio() || this.fechaFin();
+    const tieneFiltros =
+      this.filtroTipo() ||
+      this.filtroEstado() ||
+      this.filtroEntidad() ||
+      this.fechaInicio() ||
+      this.fechaFin();
     if (!tieneFiltros) {
       this.loadOperaciones();
       return;
@@ -85,22 +121,26 @@ export class OperacionListComponent implements OnInit {
       fechaInicio: this.fechaInicio() || null,
       fechaFin: this.fechaFin() || null,
     };
-    this.operacionService.buscar(filtro, this.pageIndex, this.pageSize).subscribe({
-      next: (response) => {
-        this.dataSource.data = response.content;
-        this.totalElements = response.totalElements;
-        this.loading.set(false);
-      },
-      error: () => { this.loading.set(false); },
-    });
+    this.operacionService
+      .buscar(filtro, this.pageIndex, this.pageSize)
+      .subscribe({
+        next: (response) => {
+          this.dataSource.data = response.content;
+          this.totalElements = response.totalElements;
+          this.loading.set(false);
+        },
+        error: () => {
+          this.loading.set(false);
+        },
+      });
   }
 
   limpiarFiltros(): void {
-    this.filtroTipo.set('');
-    this.filtroEstado.set('');
-    this.filtroEntidad.set('');
-    this.fechaInicio.set('');
-    this.fechaFin.set('');
+    this.filtroTipo.set("");
+    this.filtroEstado.set("");
+    this.filtroEntidad.set("");
+    this.fechaInicio.set("");
+    this.fechaFin.set("");
     this.pageIndex = 0;
     this.loadOperaciones();
   }
@@ -111,34 +151,58 @@ export class OperacionListComponent implements OnInit {
     this.buscar();
   }
 
-  crear(): void { this.router.navigate(['/operaciones/nuevo']); }
-  editar(op: Operacion): void { this.router.navigate(['/operaciones/editar', op.idOperacion]); }
+  crear(): void {
+    this.router.navigate(["/operaciones/nuevo"]);
+  }
+  editar(op: Operacion): void {
+    this.router.navigate(["/operaciones/editar", op.idOperacion]);
+  }
 
   eliminar(op: Operacion): void {
-    this.dialogService.confirmar(
-      'Eliminar Operación',
-      `¿Está seguro de eliminar la operación #${op.idOperacion}?`,
-      'Eliminar', 'Cancelar'
-    ).subscribe((confirmado) => {
-      if (confirmado && op.idOperacion) {
-        this.operacionService.eliminar(op.idOperacion).subscribe({
-          next: () => { this.notification.success('Operación eliminada correctamente'); this.buscar(); },
-        });
-      }
-    });
+    this.dialogService
+      .confirmar(
+        "Eliminar Operación",
+        `¿Está seguro de eliminar la operación #${op.idOperacion}?`,
+        "Eliminar",
+        "Cancelar",
+      )
+      .subscribe((confirmado) => {
+        if (confirmado && op.idOperacion) {
+          this.operacionService.eliminar(op.idOperacion).subscribe({
+            next: () => {
+              this.notification.success("Operación eliminada correctamente");
+              this.buscar();
+            },
+          });
+        }
+      });
   }
 
   formatCurrency(value: number): string {
-    return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'PEN', minimumFractionDigits: 2 }).format(value);
+    return new Intl.NumberFormat("es-ES", {
+      style: "currency",
+      currency: "PEN",
+      minimumFractionDigits: 2,
+    }).format(value);
   }
 
   formatDate(date: string | null | undefined): string {
-    if (!date) return '-';
-    return new Date(date).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    if (!date) return "-";
+    return new Date(date).toLocaleDateString("es-ES", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   }
 
   getTipoLabel(tipo: TipoOperacion): string {
-    const labels: Record<TipoOperacion, string> = { RETIRO: 'Retiro', DEPOSITO: 'Depósito', PAGO_SERVICIO: 'Pago' };
+    const labels: Record<TipoOperacion, string> = {
+      RETIRO: "Retiro",
+      DEPOSITO: "Depósito",
+      PAGO_SERVICIO: "Pago",
+    };
     return labels[tipo] || tipo;
   }
 }
