@@ -54,11 +54,12 @@ export class EntidadListComponent implements OnInit {
   dataSource = new MatTableDataSource<EntidadFinanciera>([]);
   displayedColumns: string[] = [
     "idEntidad",
-    "nombreEntidad",
+    "denominacion",
     "tipoEntidad",
     "codigoEntidad",
-    "estadoEntidad",
-    "fechaRegistro",
+    "descripcion",
+    "estado",
+    "createdAt",
     "acciones",
   ];
 
@@ -115,7 +116,7 @@ export class EntidadListComponent implements OnInit {
     this.dialogService
       .confirmar(
         "Eliminar Entidad",
-        `¿Está seguro de eliminar la entidad "${entidad.nombreEntidad}"? Esta acción no se puede deshacer.`,
+        `¿Está seguro de eliminar la entidad "${entidad.denominacion}"? Esta acción no se puede deshacer.`,
         "Eliminar",
         "Cancelar",
       )

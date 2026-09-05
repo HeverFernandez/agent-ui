@@ -24,7 +24,7 @@
         <mat-select [value]="entidadFiltro()" (selectionChange)="entidadFiltro.set($event.value)">
           <mat-option value="">Todas</mat-option>
           @for (entidad of entidades(); track entidad.idEntidad) {
-            <mat-option [value]="entidad.idEntidad">{{ entidad.nombreEntidad }}</mat-option>
+            <mat-option [value]="entidad.idEntidad">{{ entidad.denominacion }}</mat-option>
           }
         </mat-select>
       </mat-form-field>

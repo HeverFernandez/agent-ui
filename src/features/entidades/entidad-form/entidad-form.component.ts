@@ -45,10 +45,11 @@ export class EntidadFormComponent implements OnInit {
   entityId: number | null = null;
 
   form = this.fb.group({
-    nombreEntidad: ['', [Validators.required, Validators.minLength(3)]],
+    denominacion: ['', [Validators.required, Validators.minLength(3)]],
     tipoEntidad: ['BANCO' as TipoEntidad, [Validators.required]],
-    codigoEntidad: ['', [Validators.required, Validators.minLength(2)]],
-    estadoEntidad: ['ACTIVO' as EstadoEntidad, [Validators.required]],
+    descripcion: [''],
+    //codigoEntidad: ['', [Validators.required, Validators.minLength(2)]],
+    //estadoEntidad: ['ACTIVO' as EstadoEntidad, [Validators.required]],
   });
 
   ngOnInit(): void {
@@ -66,10 +67,11 @@ export class EntidadFormComponent implements OnInit {
       next: (response) => {
         const entidad = response.data;
         this.form.patchValue({
-          nombreEntidad: entidad.nombreEntidad,
+          denominacion: entidad.denominacion,
           tipoEntidad: entidad.tipoEntidad,
-          codigoEntidad: entidad.codigoEntidad,
-          estadoEntidad: entidad.estadoEntidad,
+          descripcion: entidad.descripcion,
+         // codigoEntidad: entidad.codigoEntidad,
+          //estadoEntidad: entidad.estadoEntidad,
         });
         this.loading.set(false);
       },

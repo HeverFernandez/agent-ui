@@ -28,7 +28,7 @@
             <mat-icon matPrefix>account_balance</mat-icon>
             <mat-select formControlName="idEntidad">
               @for (entidad of entidades(); track entidad.idEntidad) {
-                <mat-option [value]="entidad.idEntidad">{{ entidad.nombreEntidad }}</mat-option>
+                <mat-option [value]="entidad.idEntidad">{{ entidad.denominacion }}</mat-option>
               }
             </mat-select>
             @if (form.get('idEntidad')?.hasError('required') && form.get('idEntidad')?.touched) {

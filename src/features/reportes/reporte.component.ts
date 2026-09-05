@@ -120,7 +120,7 @@ export class ReporteComponent implements OnInit {
       const tipoLabel = op.tipoOperacion === 'PAGO_SERVICIO' ? 'Pago' : op.tipoOperacion.charAt(0) + op.tipoOperacion.slice(1).toLowerCase();
       porTipo[tipoLabel] = (porTipo[tipoLabel] || 0) + 1;
       porEstado[op.estadoOperacion] = (porEstado[op.estadoOperacion] || 0) + 1;
-      const entidadNombre = op.entidadFinanciera?.nombreEntidad || `Entidad #${op.idEntidad}`;
+      const entidadNombre = op.entidadFinanciera?.denominacion || `Entidad #${op.idEntidad}`;
       montosPorEntidad[entidadNombre] = (montosPorEntidad[entidadNombre] || 0) + op.montoOperacion;
     });
 
@@ -159,7 +159,7 @@ export class ReporteComponent implements OnInit {
     const body = this.operaciones().map((op) => [
       op.idOperacion?.toString() || '',
       op.tipoOperacion,
-      op.entidadFinanciera?.nombreEntidad || `Entidad #${op.idEntidad}`,
+      op.entidadFinanciera?.denominacion || `Entidad #${op.idEntidad}`,
       `S/ ${op.montoOperacion.toFixed(2)}`,
       op.numeroReferencia,
       op.estadoOperacion,
@@ -180,7 +180,7 @@ export class ReporteComponent implements OnInit {
     const data = this.operaciones().map((op) => ({
       ID: op.idOperacion,
       Tipo: op.tipoOperacion,
-      Entidad: op.entidadFinanciera?.nombreEntidad || `Entidad #${op.idEntidad}`,
+      Entidad: op.entidadFinanciera?.denominacion || `Entidad #${op.idEntidad}`,
       Monto: op.montoOperacion,
       Referencia: op.numeroReferencia,
       Descripción: op.descripcionOperacion,

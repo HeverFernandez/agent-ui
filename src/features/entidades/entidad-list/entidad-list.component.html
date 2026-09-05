@@ -40,9 +40,9 @@
             <td mat-cell *matCellDef="let entidad">{{ entidad.idEntidad }}</td>
           </ng-container>
 
-          <ng-container matColumnDef="nombreEntidad">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
-            <td mat-cell *matCellDef="let entidad">{{ entidad.nombreEntidad }}</td>
+          <ng-container matColumnDef="denominacion">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Denominación</th>
+            <td mat-cell *matCellDef="let entidad">{{ entidad.denominacion }}</td>
           </ng-container>
 
           <ng-container matColumnDef="tipoEntidad">
@@ -56,17 +56,23 @@
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Código</th>
             <td mat-cell *matCellDef="let entidad">{{ entidad.codigoEntidad }}</td>
           </ng-container>
+          <ng-container matColumnDef="descripcion">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Descripción</th>
+            <td mat-cell *matCellDef="let entidad">{{ entidad.descripcion }}</td>
+          </ng-container>
 
-          <ng-container matColumnDef="estadoEntidad">
+          <ng-container matColumnDef="estado">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Estado</th>
             <td mat-cell *matCellDef="let entidad">
-              <span class="estado-badge estado-{{ entidad.estadoEntidad.toLowerCase() }}">{{ entidad.estadoEntidad }}</span>
+              <span class="estado-badge" [ngClass]="entidad.estado ? 'estado-activo': 'estado-inactivo'">
+                {{ entidad.estado ? 'Activa' : 'Inactiva' }}
+              </span>
             </td>
           </ng-container>
 
-          <ng-container matColumnDef="fechaRegistro">
+          <ng-container matColumnDef="createdAt">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Registro</th>
-            <td mat-cell *matCellDef="let entidad">{{ formatDate(entidad.fechaRegistro) }}</td>
+            <td mat-cell *matCellDef="let entidad">{{ formatDate(entidad.createdAt) }}</td>
           </ng-container>
 
           <ng-container matColumnDef="acciones">

@@ -27,8 +27,9 @@ export type EstadoEntidad = 'ACTIVO' | 'INACTIVO';
 
 export interface EntidadFinanciera {
   idEntidad: number | null;
-  nombreEntidad: string;
+  denominacion: string;
   tipoEntidad: TipoEntidad;
+  descripcion: string;
   codigoEntidad: string;
   estadoEntidad: EstadoEntidad;
   fechaRegistro: string | null;

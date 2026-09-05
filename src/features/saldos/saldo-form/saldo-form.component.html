@@ -18,11 +18,10 @@
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Entidad Financiera</mat-label>
           <mat-icon matPrefix>account_balance</mat-icon>
-          <mat-select formControlName="idEntidad">
-            @for (entidad of entidades(); track entidad.idEntidad) {
-              <mat-option [value]="entidad.idEntidad">{{ entidad.nombreEntidad }} ({{ entidad.codigoEntidad }})</mat-option>
-            }
-          </mat-select>
+          <input matInput readonly [value]="entidadSeleccionada() ? entidadSeleccionada()!.denominacion + ' (' + entidadSeleccionada()!.codigoEntidad + ')' : ''" placeholder="Seleccione una entidad" (click)="seleccionarEntidad()" />
+          <button mat-icon-button matSuffix type="button" aria-label="Seleccionar entidad" (click)="seleccionarEntidad()">
+            <mat-icon>search</mat-icon>
+          </button>
           @if (form.get('idEntidad')?.hasError('required') && form.get('idEntidad')?.touched) {
             <mat-error>Seleccione una entidad</mat-error>
           }
@@ -73,9 +72,7 @@
             <mat-label>Usuario Asignador</mat-label>
             <mat-icon matPrefix>person</mat-icon>
             <input matInput formControlName="usuarioAsignador" />
-            @if (form.get('usuarioAsignador')?.hasError('required') && form.get('usuarioAsignador')?.touched) {
-              <mat-error>El usuario asignador es obligatorio</mat-error>
-            }
+            
           </mat-form-field>
 
           <mat-form-field appearance="outline">

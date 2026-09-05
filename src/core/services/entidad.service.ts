@@ -69,7 +69,7 @@ export class EntidadService {
 
   listarActivas(): Observable<ApiResponse<EntidadFinanciera[]>> {
     return this.http.get<ApiResponse<EntidadFinanciera[]>>(
-      "/entidades-financieras/activas",
+      "/entidades-financieras/all/active",
     );
   }
 }

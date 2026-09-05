@@ -16,15 +16,21 @@
     <mat-card class="form-card">
       <form [formGroup]="form" (ngSubmit)="save()" class="entidad-form">
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Nombre de la Entidad</mat-label>
+          <mat-label>Denominación Entidad</mat-label>
           <mat-icon matPrefix>account_balance</mat-icon>
-          <input matInput formControlName="nombreEntidad" placeholder="Ej: Banco de Crédito" />
-          @if (form.get('nombreEntidad')?.hasError('required') && form.get('nombreEntidad')?.touched) {
-            <mat-error>El nombre es obligatorio</mat-error>
+          <input matInput formControlName="denominacion" placeholder="Ej: Banco de Crédito" />
+          @if (form.get('denominacion')?.hasError('required') && form.get('denominacion')?.touched) {
+            <mat-error>La denominación es obligatoria</mat-error>
           }
-          @if (form.get('nombreEntidad')?.hasError('minlength') && form.get('nombreEntidad')?.touched) {
+          @if (form.get('denominacion')?.hasError('minlength') && form.get('denominacion')?.touched) {
             <mat-error>Mínimo 3 caracteres</mat-error>
           }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Descripción</mat-label>
+          <mat-icon matPrefix>notes</mat-icon>
+          <textarea matInput formControlName="descripcion" rows="3"></textarea>
         </mat-form-field>
 
         <div class="form-row">
@@ -36,28 +42,7 @@
               <mat-option value="SERVICIO">Servicio</mat-option>
             </mat-select>
           </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Código</mat-label>
-            <mat-icon matPrefix>code</mat-icon>
-            <input matInput formControlName="codigoEntidad" placeholder="Ej: BCP001" />
-            @if (form.get('codigoEntidad')?.hasError('required') && form.get('codigoEntidad')?.touched) {
-              <mat-error>El código es obligatorio</mat-error>
-            }
-            @if (form.get('codigoEntidad')?.hasError('minlength') && form.get('codigoEntidad')?.touched) {
-              <mat-error>Mínimo 2 caracteres</mat-error>
-            }
-          </mat-form-field>
         </div>
-
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Estado</mat-label>
-          <mat-icon matPrefix>toggle_on</mat-icon>
-          <mat-select formControlName="estadoEntidad">
-            <mat-option value="ACTIVO">Activo</mat-option>
-            <mat-option value="INACTIVO">Inactivo</mat-option>
-          </mat-select>
-        </mat-form-field>
 
         <div class="form-actions">
           <button mat-button type="button" (click)="cancel()">Cancelar</button>

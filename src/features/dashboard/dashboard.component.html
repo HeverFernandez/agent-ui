@@ -96,7 +96,7 @@
               <div class="saldo-item">
                 <div class="saldo-info">
                   <span class="saldo-entidad">
-                    {{ saldo.entidadFinanciera?.nombreEntidad || 'Entidad #' + saldo.idEntidad }}
+                    {{ saldo.entidadFinanciera?.denominacion || 'Entidad #' + saldo.idEntidad }}
                   </span>
                   <span class="saldo-estado estado-badge estado-{{ saldo.estadoSaldo.toLowerCase() }}">
                     {{ saldo.estadoSaldo }}
