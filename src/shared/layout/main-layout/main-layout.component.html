@@ -62,7 +62,7 @@
         <div class="user-avatar">{{ getInitials() }}</div>
       </button>
 
-      <mat-menu #userMenu="matMenu" xPosition="before">
+      <mat-menu #userMenu="matMenu" class="user-menu" xPosition="before">
         <div class="menu-header">
           <div class="menu-header-name">{{ getFullName() }}</div>
           <div class="menu-header-email">{{ currentUser()?.correo }}</div>

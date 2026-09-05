@@ -38,9 +38,10 @@ export interface EntidadFinanciera {
 export type EstadoSaldo = 'ACTIVO' | 'AGOTADO' | 'VENCIDO' | 'SUSPENDIDO';
 
 export interface Saldo {
-  idSaldo: number | null;
   idEntidad: number;
   entidadFinanciera?: EntidadFinanciera;
+  entidadDenominacion?: string;
+  entidadFinancieraId?: number;
   montoInicial: number;
   montoDisponible: number;
   fechaAsignacion: string;
@@ -48,16 +49,22 @@ export interface Saldo {
   usuarioAsignador: string;
   observaciones: string;
   estadoSaldo: EstadoSaldo;
+  id: number;
 }
 
-export type TipoOperacion = 'RETIRO' | 'DEPOSITO' | 'PAGO_SERVICIO';
-export type EstadoOperacion = 'PENDIENTE' | 'COMPLETADA' | 'ANULADA' | 'FALLIDA';
+export type TipoOperacion = "RETIRO" | "DEPOSITO" | "PAGO_SERVICIO";
+export type EstadoOperacion =
+  | "PENDIENTE"
+  | "COMPLETADA"
+  | "ANULADA"
+  | "FALLIDA";
 
 export interface Operacion {
-  idOperacion: number | null;
+  id: number | null;
   idEntidad: number;
   entidadFinanciera?: EntidadFinanciera;
-  tipoOperacion: TipoOperacion;
+  entidadDenominacion?: string;
+  tipoOperacion: string;
   montoOperacion: number;
   descripcionOperacion: string;
   fechaOperacion: string;

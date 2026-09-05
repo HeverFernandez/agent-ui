@@ -157,7 +157,7 @@ export class ReporteComponent implements OnInit {
 
     const head = [['ID', 'Tipo', 'Entidad', 'Monto', 'Referencia', 'Estado', 'Fecha']];
     const body = this.operaciones().map((op) => [
-      op.idOperacion?.toString() || '',
+      op.id?.toString() || '',
       op.tipoOperacion,
       op.entidadFinanciera?.denominacion || `Entidad #${op.idEntidad}`,
       `S/ ${op.montoOperacion.toFixed(2)}`,
@@ -178,15 +178,15 @@ export class ReporteComponent implements OnInit {
     }
 
     const data = this.operaciones().map((op) => ({
-      ID: op.idOperacion,
+      ID: op.id,
       Tipo: op.tipoOperacion,
-      Entidad: op.entidadFinanciera?.denominacion || `Entidad #${op.idEntidad}`,
+      Entidad: op.entidadDenominacion || `Entidad #${op.idEntidad}`,
       Monto: op.montoOperacion,
       Referencia: op.numeroReferencia,
       Descripción: op.descripcionOperacion,
       Estado: op.estadoOperacion,
-      'Servicio Pagado': op.servicioPagado,
-      'Usuario': op.usuarioRegistro,
+      "Servicio Pagado": op.servicioPagado,
+      Usuario: op.usuarioRegistro,
       Fecha: this.formatDate(op.fechaOperacion),
     }));
 

@@ -155,20 +155,20 @@ export class OperacionListComponent implements OnInit {
     this.router.navigate(["/operaciones/nuevo"]);
   }
   editar(op: Operacion): void {
-    this.router.navigate(["/operaciones/editar", op.idOperacion]);
+    this.router.navigate(["/operaciones/editar", op.id]);
   }
 
   eliminar(op: Operacion): void {
     this.dialogService
       .confirmar(
         "Eliminar Operación",
-        `¿Está seguro de eliminar la operación #${op.idOperacion}?`,
+        `¿Está seguro de eliminar la operación #${op.id}?`,
         "Eliminar",
         "Cancelar",
       )
       .subscribe((confirmado) => {
-        if (confirmado && op.idOperacion) {
-          this.operacionService.eliminar(op.idOperacion).subscribe({
+        if (confirmado && op.id) {
+          this.operacionService.eliminar(op.id).subscribe({
             next: () => {
               this.notification.success("Operación eliminada correctamente");
               this.buscar();

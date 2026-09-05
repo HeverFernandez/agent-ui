@@ -51,7 +51,7 @@
                 </tr>
               </thead>
               <tbody>
-                @for (op of recentOperaciones(); track op.idOperacion) {
+                @for (op of recentOperaciones(); track op.id) {
                   <tr>
                     <td>
                       <span class="tipo-badge tipo-{{ op.tipoOperacion.toLowerCase() }}">
@@ -92,21 +92,26 @@
 
         @if (topSaldos().length > 0) {
           <div class="saldos-list">
-            @for (saldo of topSaldos(); track saldo.idSaldo) {
-              <div class="saldo-item">
-                <div class="saldo-info">
-                  <span class="saldo-entidad">
-                    {{ saldo.entidadFinanciera?.denominacion || 'Entidad #' + saldo.idEntidad }}
-                  </span>
-                  <span class="saldo-estado estado-badge estado-{{ saldo.estadoSaldo.toLowerCase() }}">
-                    {{ saldo.estadoSaldo }}
-                  </span>
-                </div>
-                <div class="saldo-monto">
-                  {{ formatCurrency(saldo.montoDisponible) }}
-                </div>
-              </div>
-            }
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Entidad</th>
+                  <th>Monto disponible</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (saldo of topSaldos(); track saldo.id) {
+                  <tr>
+                    <td>
+                      <span class="tipo-badge tipo-{{ saldo.entidadFinancieraId }}">
+                        {{ saldo.entidadDenominacion }}
+                      </span>
+                    </td>
+                    <td class="monto">{{ formatCurrency(saldo.montoDisponible) }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>            
           </div>
         } @else {
           <div class="empty-state">

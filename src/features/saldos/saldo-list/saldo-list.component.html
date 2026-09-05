@@ -44,7 +44,7 @@
 
           <ng-container matColumnDef="entidad">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Entidad</th>
-            <td mat-cell *matCellDef="let saldo">{{ saldo.entidadFinanciera?.nombreEntidad || 'Entidad #' + saldo.idEntidad }}</td>
+            <td mat-cell *matCellDef="let saldo">{{ saldo.entidadDenominacion }}</td>
           </ng-container>
 
           <ng-container matColumnDef="montoInicial">
@@ -65,7 +65,7 @@
           <ng-container matColumnDef="estadoSaldo">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Estado</th>
             <td mat-cell *matCellDef="let saldo">
-              <span class="estado-badge estado-{{ saldo.estadoSaldo.toLowerCase() }}">{{ saldo.estadoSaldo }}</span>
+              <span class="estado-badge estado-{{ saldo.estado.toLowerCase() }}">{{ saldo.estado }}</span>
             </td>
           </ng-container>
 

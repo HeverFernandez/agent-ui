@@ -17,15 +17,22 @@ import { Operacion, EntidadFinanciera, TipoOperacion, EstadoOperacion } from '..
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
-  selector: 'app-operacion-form',
+  selector: "app-operacion-form",
   standalone: true,
   imports: [
-    CommonModule, ReactiveFormsModule, MatCardModule, MatFormFieldModule,
-    MatInputModule, MatSelectModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule,
+    CommonModule,
+    ReactiveFormsModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
     LoadingSpinnerComponent,
   ],
-  templateUrl: './operacion-form.component.html',
-  styleUrls: ['./operacion-form.component.scss'],
+  templateUrl: "./operacion-form.component.html",
+  styleUrls: ["./operacion-form.component.scss"],
 })
 export class OperacionFormComponent implements OnInit {
   private fb = inject(FormBuilder);
@@ -44,23 +51,28 @@ export class OperacionFormComponent implements OnInit {
 
   form = this.fb.group({
     idEntidad: [null as number | null, [Validators.required]],
-    tipoOperacion: ['RETIRO' as TipoOperacion, [Validators.required]],
+    tipoOperacion: ["RETIRO", [Validators.required]],
     montoOperacion: [0, [Validators.required, Validators.min(0.01)]],
-    descripcionOperacion: ['', [Validators.required]],
-    fechaOperacion: [new Date().toISOString().split('T')[0], [Validators.required]],
-    numeroReferencia: ['', [Validators.required]],
-    usuarioRegistro: ['', [Validators.required]],
-    estadoOperacion: ['COMPLETADA' as EstadoOperacion, [Validators.required]],
-    servicioPagado: [''],
+    descripcionOperacion: ["", [Validators.required]],
+    fechaOperacion: [
+      new Date().toISOString().split("T")[0],
+      [Validators.required],
+    ],
+    numeroReferencia: ["", [Validators.required]],
+    usuarioRegistro: ["", [Validators.required]],
+    estadoOperacion: ["COMPLETADA" as EstadoOperacion, [Validators.required]],
+    servicioPagado: [""],
   });
 
   ngOnInit(): void {
     this.loadEntidades();
     const user = this.authService.currentUser();
     if (user) {
-      this.form.patchValue({ usuarioRegistro: `${user.nombre} ${user.apellido}` });
+      this.form.patchValue({
+        usuarioRegistro: `${user.nombre} ${user.apellido}`,
+      });
     }
-    const id = this.route.snapshot.paramMap.get('id');
+    const id = this.route.snapshot.paramMap.get("id");
     if (id) {
       this.isEdit.set(true);
       this.operacionId = +id;
@@ -70,7 +82,9 @@ export class OperacionFormComponent implements OnInit {
 
   loadEntidades(): void {
     this.entidadService.listarActivas().subscribe({
-      next: (response) => { this.entidades.set(response.data); },
+      next: (response) => {
+        this.entidades.set(response.data);
+      },
     });
   }
 
@@ -84,7 +98,7 @@ export class OperacionFormComponent implements OnInit {
           tipoOperacion: op.tipoOperacion,
           montoOperacion: op.montoOperacion,
           descripcionOperacion: op.descripcionOperacion,
-          fechaOperacion: op.fechaOperacion?.split('T')[0] || '',
+          fechaOperacion: op.fechaOperacion?.split("T")[0] || "",
           numeroReferencia: op.numeroReferencia,
           usuarioRegistro: op.usuarioRegistro,
           estadoOperacion: op.estadoOperacion,
@@ -92,14 +106,16 @@ export class OperacionFormComponent implements OnInit {
         });
         this.loading.set(false);
       },
-      error: () => { this.loading.set(false); },
+      error: () => {
+        this.loading.set(false);
+      },
     });
   }
 
   onTipoChange(): void {
-    const tipo = this.form.get('tipoOperacion')?.value;
-    if (tipo !== 'PAGO_SERVICIO') {
-      this.form.patchValue({ servicioPagado: '' });
+    const tipo = this.form.get("tipoOperacion")?.value;
+    if (tipo !== "PAGO_SERVICIO") {
+      this.form.patchValue({ servicioPagado: "" });
     }
   }
 
@@ -110,7 +126,7 @@ export class OperacionFormComponent implements OnInit {
     }
     this.saving.set(true);
     const operacion: Operacion = {
-      idOperacion: this.operacionId,
+      id: this.operacionId,
       idEntidad: this.form.value.idEntidad!,
       tipoOperacion: this.form.value.tipoOperacion as TipoOperacion,
       montoOperacion: this.form.value.montoOperacion!,
@@ -119,21 +135,35 @@ export class OperacionFormComponent implements OnInit {
       numeroReferencia: this.form.value.numeroReferencia!,
       usuarioRegistro: this.form.value.usuarioRegistro!,
       estadoOperacion: this.form.value.estadoOperacion as EstadoOperacion,
-      servicioPagado: this.form.value.servicioPagado || '',
+      servicioPagado: this.form.value.servicioPagado || "",
     };
 
     if (this.isEdit() && this.operacionId) {
       this.operacionService.actualizar(this.operacionId, operacion).subscribe({
-        next: () => { this.saving.set(false); this.notification.success('Operación actualizada correctamente'); this.router.navigate(['/operaciones']); },
-        error: () => { this.saving.set(false); },
+        next: () => {
+          this.saving.set(false);
+          this.notification.success("Operación actualizada correctamente");
+          this.router.navigate(["/operaciones"]);
+        },
+        error: () => {
+          this.saving.set(false);
+        },
       });
     } else {
       this.operacionService.crear(operacion).subscribe({
-        next: () => { this.saving.set(false); this.notification.success('Operación registrada correctamente'); this.router.navigate(['/operaciones']); },
-        error: () => { this.saving.set(false); },
+        next: () => {
+          this.saving.set(false);
+          this.notification.success("Operación registrada correctamente");
+          this.router.navigate(["/operaciones"]);
+        },
+        error: () => {
+          this.saving.set(false);
+        },
       });
     }
   }
 
-  cancel(): void { this.router.navigate(['/operaciones']); }
+  cancel(): void {
+    this.router.navigate(["/operaciones"]);
+  }
 }

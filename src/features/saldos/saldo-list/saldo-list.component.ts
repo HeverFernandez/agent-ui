@@ -104,20 +104,21 @@ export class SaldoListComponent implements OnInit {
     this.router.navigate(["/saldos/nuevo"]);
   }
   editar(saldo: Saldo): void {
-    this.router.navigate(["/saldos/editar", saldo.idSaldo]);
+    this.router.navigate(["/saldos/editar", saldo.id]);
   }
 
   eliminar(saldo: Saldo): void {
+
     this.dialogService
       .confirmar(
         "Eliminar Saldo",
-        `¿Está seguro de eliminar el saldo #${saldo.idSaldo}?`,
+        `¿Está seguro de eliminar el saldo de ${saldo.entidadDenominacion}?`,
         "Eliminar",
         "Cancelar",
       )
       .subscribe((confirmado) => {
-        if (confirmado && saldo.idSaldo) {
-          this.saldoService.eliminar(saldo.idSaldo).subscribe({
+        if (confirmado && saldo.id) {
+          this.saldoService.eliminar(saldo.id).subscribe({
             next: () => {
               this.notification.success("Saldo eliminado correctamente");
               this.loadSaldos();
