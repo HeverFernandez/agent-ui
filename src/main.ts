@@ -1,6 +1,6 @@
 import { bootstrapApplication } from "@angular/platform-browser";
 import { provideRouter, withInMemoryScrolling } from "@angular/router";
-import { provideHttpClient, withInterceptors } from "@angular/common/http";
+import { provideHttpClient, withInterceptors, withXhr } from "@angular/common/http";
 import { provideAnimations } from "@angular/platform-browser/animations";
 import { importProvidersFrom } from "@angular/core";
 import { MatNativeDateModule } from "@angular/material/core";
@@ -23,7 +23,7 @@ bootstrapApplication(AppComponent, {
       provide: LocationStrategy,
       useClass: HashLocationStrategy,
     },
-    provideHttpClient(
+    provideHttpClient(withXhr(), 
       withInterceptors([authInterceptor, errorInterceptor, loadingInterceptor]),
     ),
     provideAnimations(),

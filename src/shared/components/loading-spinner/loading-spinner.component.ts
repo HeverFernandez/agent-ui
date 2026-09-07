@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
@@ -6,6 +6,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   selector: 'app-loading-spinner',
   standalone: true,
   imports: [CommonModule, MatProgressSpinnerModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div class="loader-container">
       <mat-progress-spinner diameter="50" mode="indeterminate" color="primary"></mat-progress-spinner>

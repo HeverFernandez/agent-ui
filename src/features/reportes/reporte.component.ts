@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -48,6 +48,7 @@ interface ChartData {
     LoadingSpinnerComponent,
   ],
   templateUrl: "./reporte.component.html",
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ["./reporte.component.scss"],
 })
 export class ReporteComponent implements OnInit {

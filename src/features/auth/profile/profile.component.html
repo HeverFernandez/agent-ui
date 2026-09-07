@@ -37,7 +37,7 @@
           <mat-icon>event</mat-icon>
           <div>
             <span class="meta-label">Fecha de registro</span>
-            <span class="meta-value">{{ currentUser()?.fechaRegistro | date: 'dd/MM/yyyy' }}</span>
+            <span class="meta-value">{{ $safeNavigationMigration(currentUser()?.fechaRegistro) | date: 'dd/MM/yyyy' }}</span>
           </div>
         </div>
       </div>

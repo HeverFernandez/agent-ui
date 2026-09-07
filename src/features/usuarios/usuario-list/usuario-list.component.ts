@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, signal, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
@@ -42,6 +42,7 @@ import { AlertService } from "../../../shared/services/alert.service";
     LoadingSpinnerComponent,
   ],
   templateUrl: "./usuario-list.component.html",
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ["./usuario-list.component.scss"],
 })
 export class UsuarioListComponent implements OnInit {

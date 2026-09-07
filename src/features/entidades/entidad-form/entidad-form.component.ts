@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -34,6 +34,7 @@ import { AlertService } from "../../../shared/services/alert.service";
     LoadingSpinnerComponent,
   ],
   templateUrl: "./entidad-form.component.html",
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ["./entidad-form.component.scss"],
 })
 export class EntidadFormComponent implements OnInit {

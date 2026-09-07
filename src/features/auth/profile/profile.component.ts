@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -24,6 +24,7 @@ import { AlertService } from "../../../shared/services/alert.service";
     MatDividerModule,
   ],
   templateUrl: "./profile.component.html",
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ["./profile.component.scss"],
 })
 export class ProfileComponent {
