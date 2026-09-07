@@ -1,0 +1,122 @@
+.alert-box {
+  position: fixed;
+  bottom: 1.25rem; /* 20px / 5 */
+  right: 1.25rem;
+  width: 15rem; /* w-60 */
+  padding: 1rem; /* p-4 */
+  margin-bottom: 1rem; /* mb-4 */
+  font-size: 0.875rem; /* text-sm */
+  line-height: 1.25rem;
+  border-radius: 0.5rem; /* rounded-lg */
+  z-index: 999;
+  animation: fadeIn 0.3s ease-in-out;
+
+  /* Variantes de tipos de alerta */
+  &.alert-success {
+    background-color: #f0fdf4; /* green-50 */
+    color: #166534; /* green-800 */
+
+    @media (prefers-color-scheme: dark) {
+      color: #4ade80; /* dark:text-green-400 */
+    }
+  }
+
+  &.alert-warning {
+    background-color: #fefce8; /* yellow-50 */
+    color: #854d0e; /* yellow-800 */
+
+    @media (prefers-color-scheme: dark) {
+      color: #facc15; /* dark:text-yellow-400 */
+    }
+  }
+
+  &.alert-error {
+    background-color: #fef2f2; /* red-50 */
+    color: #991b1b; /* red-800 */
+
+    @media (prefers-color-scheme: dark) {
+      color: #f87171; /* dark:text-red-400 */
+    }
+  }
+
+  &.alert-info {
+    background-color: #eff6ff; /* blue-50 */
+    color: #1e40af; /* blue-800 */
+
+    @media (prefers-color-scheme: dark) {
+      color: #60a5fa; /* dark:text-blue-400 */
+    }
+  }
+}
+
+.alert-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.625rem; /* gap-2.5 */
+}
+
+.alert-icon {
+  grid-column: span 1 / span 1;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+}
+
+.alert-close-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  grid-column: span 1 / span 1;
+  cursor: pointer;
+}
+
+.alert-close-button {
+  background: transparent;
+  color: inherit;
+  font-size: 0.875rem;
+  width: 2.25rem; /* w-9 */
+  height: 2.25rem; /* h-9 */
+  margin-left: auto;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.25rem;
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(
+      0,
+      0,
+      0,
+      0.05
+    ); /* Simulación de hover de neutral-tertiary */
+    color: inherit;
+  }
+}
+
+.alert-close-icon {
+  width: 1.25rem; /* w-5 */
+  height: 1.25rem; /* h-5 */
+}
+
+.alert-text-content {
+  grid-column: span 5 / span 5;
+}
+
+.alert-title {
+  font-weight: 700;
+}
+
+/* Definición de la animación fadeIn por si no la tienes globalmente */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

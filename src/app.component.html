@@ -1,0 +1,4 @@
+<router-outlet />
+@if (_alertService.isAlert()) {
+  <tyn-alert [alertMenu]="_alertService.alertMenu()"> </tyn-alert>
+}

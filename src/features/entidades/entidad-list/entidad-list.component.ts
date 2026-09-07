@@ -12,9 +12,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { EntidadService } from '../../../core/services/entidad.service';
-import { NotificationService } from '../../../core/services/notification.service';
-import { DialogService } from '../../../shared/services/dialog.service';
+import { EntidadService } from "../../../core/services/entidad.service";
+import { DialogService } from "../../../shared/services/dialog.service";
 import {
   EntidadFinanciera,
   TipoEntidad,
@@ -22,6 +21,7 @@ import {
   ApiResponse,
 } from "../../../core/models/models";
 import { LoadingSpinnerComponent } from "../../../shared/components/loading-spinner/loading-spinner.component";
+import { AlertService } from "../../../shared/services/alert.service";
 
 @Component({
   selector: "app-entidad-list",
@@ -47,7 +47,7 @@ import { LoadingSpinnerComponent } from "../../../shared/components/loading-spin
 export class EntidadListComponent implements OnInit {
   private entidadService = inject(EntidadService);
   private router = inject(Router);
-  private notification = inject(NotificationService);
+  private _alertService = inject(AlertService);
   private dialogService = inject(DialogService);
 
   loading = signal(true);
@@ -124,7 +124,11 @@ export class EntidadListComponent implements OnInit {
         if (confirmado && entidad.idEntidad) {
           this.entidadService.eliminar(entidad.idEntidad).subscribe({
             next: () => {
-              this.notification.success("Entidad eliminada correctamente");
+              this._alertService.getAlert(
+                "Entidad eliminada correctamente",
+                "",
+                "success",
+              );
               this.loadEntidades();
             },
           });

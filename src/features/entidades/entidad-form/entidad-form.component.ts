@@ -9,13 +9,17 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { EntidadService } from '../../../core/services/entidad.service';
-import { NotificationService } from '../../../core/services/notification.service';
-import { EntidadFinanciera, TipoEntidad, EstadoEntidad } from '../../../core/models/models';
-import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+import { EntidadService } from "../../../core/services/entidad.service";
+import {
+  EntidadFinanciera,
+  TipoEntidad,
+  EstadoEntidad,
+} from "../../../core/models/models";
+import { LoadingSpinnerComponent } from "../../../shared/components/loading-spinner/loading-spinner.component";
+import { AlertService } from "../../../shared/services/alert.service";
 
 @Component({
-  selector: 'app-entidad-form',
+  selector: "app-entidad-form",
   standalone: true,
   imports: [
     CommonModule,
@@ -29,15 +33,15 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
     MatProgressSpinnerModule,
     LoadingSpinnerComponent,
   ],
-  templateUrl: './entidad-form.component.html',
-  styleUrls: ['./entidad-form.component.scss'],
+  templateUrl: "./entidad-form.component.html",
+  styleUrls: ["./entidad-form.component.scss"],
 })
 export class EntidadFormComponent implements OnInit {
   private fb = inject(FormBuilder);
   private entidadService = inject(EntidadService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private notification = inject(NotificationService);
+  private _alertService = inject(AlertService);
 
   loading = signal(false);
   saving = signal(false);
@@ -45,15 +49,15 @@ export class EntidadFormComponent implements OnInit {
   entityId: number | null = null;
 
   form = this.fb.group({
-    denominacion: ['', [Validators.required, Validators.minLength(3)]],
-    tipoEntidad: ['BANCO' as TipoEntidad, [Validators.required]],
-    descripcion: [''],
+    denominacion: ["", [Validators.required, Validators.minLength(3)]],
+    tipoEntidad: ["BANCO" as TipoEntidad, [Validators.required]],
+    descripcion: [""],
     //codigoEntidad: ['', [Validators.required, Validators.minLength(2)]],
     //estadoEntidad: ['ACTIVO' as EstadoEntidad, [Validators.required]],
   });
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
+    const id = this.route.snapshot.paramMap.get("id");
     if (id) {
       this.isEdit.set(true);
       this.entityId = +id;
@@ -70,7 +74,7 @@ export class EntidadFormComponent implements OnInit {
           denominacion: entidad.denominacion,
           tipoEntidad: entidad.tipoEntidad,
           descripcion: entidad.descripcion,
-         // codigoEntidad: entidad.codigoEntidad,
+          // codigoEntidad: entidad.codigoEntidad,
           //estadoEntidad: entidad.estadoEntidad,
         });
         this.loading.set(false);
@@ -97,8 +101,12 @@ export class EntidadFormComponent implements OnInit {
       this.entidadService.actualizar(this.entityId, entidad).subscribe({
         next: () => {
           this.saving.set(false);
-          this.notification.success('Entidad actualizada correctamente');
-          this.router.navigate(['/entidades']);
+          this._alertService.getAlert(
+            "Entidad actualizada correctamente",
+            "",
+            "success",
+          );
+          this.router.navigate(["/entidades"]);
         },
         error: () => {
           this.saving.set(false);
@@ -108,8 +116,12 @@ export class EntidadFormComponent implements OnInit {
       this.entidadService.crear(entidad).subscribe({
         next: () => {
           this.saving.set(false);
-          this.notification.success('Entidad creada correctamente');
-          this.router.navigate(['/entidades']);
+          this._alertService.getAlert(
+            "Entidad creada correctamente",
+            "",
+            "success",
+          );
+          this.router.navigate(["/entidades"]);
         },
         error: () => {
           this.saving.set(false);
@@ -119,6 +131,6 @@ export class EntidadFormComponent implements OnInit {
   }
 
   cancel(): void {
-    this.router.navigate(['/entidades']);
+    this.router.navigate(["/entidades"]);
   }
 }

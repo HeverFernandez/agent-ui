@@ -10,11 +10,16 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { OperacionService } from '../../../core/services/operacion.service';
-import { EntidadService } from '../../../core/services/entidad.service';
-import { NotificationService } from '../../../core/services/notification.service';
-import { AuthService } from '../../../core/services/auth.service';
-import { Operacion, EntidadFinanciera, TipoOperacion, EstadoOperacion } from '../../../core/models/models';
-import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+import { EntidadService } from "../../../core/services/entidad.service";
+import { AuthService } from "../../../core/services/auth.service";
+import {
+  Operacion,
+  EntidadFinanciera,
+  TipoOperacion,
+  EstadoOperacion,
+} from "../../../core/models/models";
+import { LoadingSpinnerComponent } from "../../../shared/components/loading-spinner/loading-spinner.component";
+import { AlertService } from "../../../shared/services/alert.service";
 
 @Component({
   selector: "app-operacion-form",
@@ -40,7 +45,7 @@ export class OperacionFormComponent implements OnInit {
   private entidadService = inject(EntidadService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private notification = inject(NotificationService);
+  private _alertService = inject(AlertService);
   private authService = inject(AuthService);
 
   loading = signal(false);
@@ -142,7 +147,11 @@ export class OperacionFormComponent implements OnInit {
       this.operacionService.actualizar(this.operacionId, operacion).subscribe({
         next: () => {
           this.saving.set(false);
-          this.notification.success("Operación actualizada correctamente");
+          this._alertService.getAlert(
+            "Operación actualizada correctamente",
+            "",
+            "success",
+          );
           this.router.navigate(["/operaciones"]);
         },
         error: () => {
@@ -153,7 +162,11 @@ export class OperacionFormComponent implements OnInit {
       this.operacionService.crear(operacion).subscribe({
         next: () => {
           this.saving.set(false);
-          this.notification.success("Operación registrada correctamente");
+          this._alertService.getAlert(
+            "Operación registrada correctamente",
+            "",
+            "success",
+          );
           this.router.navigate(["/operaciones"]);
         },
         error: () => {

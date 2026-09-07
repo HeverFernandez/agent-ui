@@ -3,7 +3,7 @@
 .filter-card {
   border-radius: var(--radio-borde); margin-bottom: 16px; box-shadow: var(--sombra-suave);
   .filters { display: flex; gap: 12px; padding: 8px 16px; flex-wrap: wrap; align-items: center; }
-  .filter-field { flex: 1 1 180px; }
+  .filter-field { flex: 1 1 180px; background-color: #e3f2fd;}
   .filter-actions { display: flex; gap: 8px; align-items: center; }
 }
 

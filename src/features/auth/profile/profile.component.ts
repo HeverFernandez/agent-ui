@@ -8,10 +8,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { AuthService } from '../../../core/services/auth.service';
-import { NotificationService } from '../../../core/services/notification.service';
+import { AlertService } from "../../../shared/services/alert.service";
 
 @Component({
-  selector: 'app-profile',
+  selector: "app-profile",
   standalone: true,
   imports: [
     CommonModule,
@@ -23,21 +23,21 @@ import { NotificationService } from '../../../core/services/notification.service
     MatIconModule,
     MatDividerModule,
   ],
-  templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.scss'],
+  templateUrl: "./profile.component.html",
+  styleUrls: ["./profile.component.scss"],
 })
 export class ProfileComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
-  private notification = inject(NotificationService);
+  private _alertService = inject(AlertService);
 
   currentUser = this.authService.currentUser;
   loading = signal(false);
 
   profileForm = this.fb.group({
-    nombre: ['', [Validators.required]],
-    apellido: ['', [Validators.required]],
-    correo: [{ value: '', disabled: true }],
+    nombre: ["", [Validators.required]],
+    apellido: ["", [Validators.required]],
+    correo: [{ value: "", disabled: true }],
   });
 
   constructor() {
@@ -70,19 +70,23 @@ export class ProfileComponent {
     setTimeout(() => {
       this.authService.updateProfile(updatedUser);
       this.loading.set(false);
-      this.notification.success('Perfil actualizado correctamente');
+      this._alertService.getAlert(
+        "Perfil actualizado correctamente",
+        "",
+        "success",
+      );
     }, 500);
   }
 
   getInitials(): string {
     const user = this.currentUser();
-    if (!user) return '?';
+    if (!user) return "?";
     return `${user.nombre.charAt(0)}${user.apellido.charAt(0)}`.toUpperCase();
   }
 
   getFullName(): string {
     const user = this.currentUser();
-    if (!user) return '';
+    if (!user) return "";
     return `${user.nombre} ${user.apellido}`;
   }
 }

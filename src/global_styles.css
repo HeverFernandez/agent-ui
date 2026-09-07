@@ -219,3 +219,27 @@ router-outlet + * {
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+.user-menu {
+  background: var(--color-blanco)!important;
+}
+
+.primary-button {
+  padding: 5px;
+  margin-top: 8px;
+  border-radius: 24px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-primario);
+  border: 2px solid var(--color-primario);
+  justify-content: center;
+  items-align: center;
+  display: flex;
+  cursor: pointer;
+  transition: background-color var(--transicion), color var(--transicion), box-shadow var(--transicion);
+}
+
+.primary-button:hover {
+  background-color: var(--color-primario);
+  color: var(--color-blanco);
+  box-shadow: var(--sombra-media);
+}

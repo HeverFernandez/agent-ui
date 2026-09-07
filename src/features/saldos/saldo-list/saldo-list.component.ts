@@ -12,9 +12,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { SaldoService } from '../../../core/services/saldo.service';
-import { NotificationService } from '../../../core/services/notification.service';
-import { DialogService } from '../../../shared/services/dialog.service';
+import { SaldoService } from "../../../core/services/saldo.service";
+import { DialogService } from "../../../shared/services/dialog.service";
 import {
   Saldo,
   EstadoSaldo,
@@ -22,6 +21,7 @@ import {
   ApiResponse,
 } from "../../../core/models/models";
 import { LoadingSpinnerComponent } from "../../../shared/components/loading-spinner/loading-spinner.component";
+import { AlertService } from "../../../shared/services/alert.service";
 
 @Component({
   selector: "app-saldo-list",
@@ -47,7 +47,7 @@ import { LoadingSpinnerComponent } from "../../../shared/components/loading-spin
 export class SaldoListComponent implements OnInit {
   private saldoService = inject(SaldoService);
   private router = inject(Router);
-  private notification = inject(NotificationService);
+  private _alertService = inject(AlertService);
   private dialogService = inject(DialogService);
 
   loading = signal(true);
@@ -108,7 +108,6 @@ export class SaldoListComponent implements OnInit {
   }
 
   eliminar(saldo: Saldo): void {
-
     this.dialogService
       .confirmar(
         "Eliminar Saldo",
@@ -120,7 +119,11 @@ export class SaldoListComponent implements OnInit {
         if (confirmado && saldo.id) {
           this.saldoService.eliminar(saldo.id).subscribe({
             next: () => {
-              this.notification.success("Saldo eliminado correctamente");
+              this._alertService.getAlert(
+                "Saldo eliminado correctamente",
+                "El saldo ha sido eliminado exitosamente.",
+                "success",
+              );
               this.loadSaldos();
             },
           });

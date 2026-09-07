@@ -73,8 +73,10 @@
             @if (saving()) {
               <mat-progress-spinner diameter="20" mode="indeterminate"></mat-progress-spinner>
             } @else {
-              <mat-icon>save</mat-icon>
-              {{ isEdit() ? 'Actualizar' : 'Crear' }}
+              <ng-container>
+                <mat-icon>save</mat-icon>
+                {{ isEdit() ? 'Actualizar' : 'Crear' }}
+              </ng-container>
             }
           </button>
         </div>

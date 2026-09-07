@@ -10,10 +10,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../../../core/services/auth.service';
-import { NotificationService } from '../../../core/services/notification.service';
+import { AlertService } from "../../../shared/services/alert.service";
 
 @Component({
-  selector: 'app-register',
+  selector: "app-register",
   standalone: true,
   imports: [
     CommonModule,
@@ -26,24 +26,24 @@ import { NotificationService } from '../../../core/services/notification.service
     MatSelectModule,
     MatProgressSpinnerModule,
   ],
-  templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss'],
+  templateUrl: "./register.component.html",
+  styleUrls: ["./register.component.scss"],
 })
 export class RegisterComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
-  private notification = inject(NotificationService);
+  private _alertService = inject(AlertService);
 
   loading = signal(false);
   hidePassword = signal(true);
 
   registerForm = this.fb.group({
-    nombre: ['', [Validators.required, Validators.minLength(2)]],
-    apellido: ['', [Validators.required, Validators.minLength(2)]],
-    correo: ['', [Validators.required, Validators.email]],
-    clave: ['', [Validators.required, Validators.minLength(6)]],
-    rol: ['AGENTE', [Validators.required]],
+    nombre: ["", [Validators.required, Validators.minLength(2)]],
+    apellido: ["", [Validators.required, Validators.minLength(2)]],
+    correo: ["", [Validators.required, Validators.email]],
+    clave: ["", [Validators.required, Validators.minLength(6)]],
+    rol: ["AGENTE", [Validators.required]],
   });
 
   submit(): void {
@@ -54,23 +54,34 @@ export class RegisterComponent {
 
     this.loading.set(true);
 
-    const usuario: Partial<import('../../../core/models/models').Usuario> = {
-      nombre: this.registerForm.value.nombre ?? '',
-      apellido: this.registerForm.value.apellido ?? '',
-      correo: this.registerForm.value.correo ?? '',
-      clave: this.registerForm.value.clave ?? '',
-      rol: (this.registerForm.value.rol ?? 'AGENTE') as 'ADMINISTRADOR' | 'AGENTE',
+    const usuario: Partial<import("../../../core/models/models").Usuario> = {
+      nombre: this.registerForm.value.nombre ?? "",
+      apellido: this.registerForm.value.apellido ?? "",
+      correo: this.registerForm.value.correo ?? "",
+      clave: this.registerForm.value.clave ?? "",
+      rol: (this.registerForm.value.rol ?? "AGENTE") as
+        | "ADMINISTRADOR"
+        | "AGENTE",
     };
 
     this.authService.register(usuario).subscribe({
       next: () => {
         this.loading.set(false);
-        this.notification.success('Usuario registrado exitosamente. Inicie sesión.');
-        this.router.navigate(['/login']);
+        this._alertService.getAlert(
+          "Usuario registrado exitosamente. Inicie sesión.",
+          "",
+          "success",
+        );
+        this.router.navigate(["/login"]);
       },
       error: (err) => {
         this.loading.set(false);
-        this.notification.error(err.message || 'Error al registrar usuario');
+        this._alertService.getAlert(
+          "Error",
+          err.message || "Error al registrar usuario",
+          "error",
+          3000,
+        );
       },
     });
   }

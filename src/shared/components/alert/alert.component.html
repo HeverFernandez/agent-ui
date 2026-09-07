@@ -1,0 +1,70 @@
+<div
+  class="alert-box"
+  role="alert"
+  [ngClass]="{
+    'alert-success': alertMenu().type === 'success',
+    'alert-warning': alertMenu().type === 'warning',
+    'alert-error': alertMenu().type === 'error',
+    'alert-info': alertMenu().type === 'info',
+  }"
+>
+  <div class="alert-grid">
+    <!-- Icono dinámico con Angular Material -->
+    <div class="alert-icon-container">
+      <mat-icon
+        [ngClass]="{
+          'text-success-icon': alertMenu().type === 'success',
+          'text-warning-icon': alertMenu().type === 'warning',
+          'text-error-icon': alertMenu().type === 'error',
+          'text-info-icon': alertMenu().type === 'info',
+        }"
+      >
+        {{
+          alertMenu().type === "success"
+            ? "check_circle"
+            : alertMenu().type === "warning"
+              ? "warning"
+              : alertMenu().type === "error"
+                ? "error"
+                : alertMenu().type === "info"
+                  ? "info"
+                  : "info"
+        }}
+      </mat-icon>
+    </div>
+
+    <div class="alert-close-container" (click)="_alertService.closeAlert()">
+      <button
+        type="button"
+        class="alert-close-button"
+        data-modal-hide="default-modal"
+      >
+        <svg
+          class="alert-close-icon"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18 17.94 6M18 18 6.06 6"
+          />
+        </svg>
+        <!-- TODO agregar el eliminar notificación -->
+        <!-- <span class="sr-only">Close alert</span> -->
+      </button>
+    </div>
+
+    <div class="alert-text-content">
+      <span class="alert-title">{{ alertMenu().title }}</span>
+      <br />
+      {{ alertMenu().message }}
+    </div>
+  </div>
+</div>

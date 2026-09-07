@@ -9,28 +9,39 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { UsuarioService } from '../../../core/services/usuario.service';
-import { NotificationService } from '../../../core/services/notification.service';
-import { Usuario, RolUsuario, EstadoUsuario } from '../../../core/models/models';
-import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+import { UsuarioService } from "../../../core/services/usuario.service";
+import {
+  Usuario,
+  RolUsuario,
+  EstadoUsuario,
+} from "../../../core/models/models";
+import { LoadingSpinnerComponent } from "../../../shared/components/loading-spinner/loading-spinner.component";
+import { AlertService } from "../../../shared/services/alert.service";
 
 @Component({
-  selector: 'app-usuario-form',
+  selector: "app-usuario-form",
   standalone: true,
   imports: [
-    CommonModule, ReactiveFormsModule, MatCardModule, MatFormFieldModule,
-    MatInputModule, MatSelectModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule,
+    CommonModule,
+    ReactiveFormsModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
     LoadingSpinnerComponent,
   ],
-  templateUrl: './usuario-form.component.html',
-  styleUrls: ['./usuario-form.component.scss'],
+  templateUrl: "./usuario-form.component.html",
+  styleUrls: ["./usuario-form.component.scss"],
 })
 export class UsuarioFormComponent implements OnInit {
   private fb = inject(FormBuilder);
   private usuarioService = inject(UsuarioService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private notification = inject(NotificationService);
+  private _alertService = inject(AlertService);
 
   loading = signal(false);
   saving = signal(false);
@@ -38,16 +49,16 @@ export class UsuarioFormComponent implements OnInit {
   userId: number | null = null;
 
   form = this.fb.group({
-    nombre: ['', [Validators.required, Validators.minLength(2)]],
-    apellido: ['', [Validators.required, Validators.minLength(2)]],
-    correo: ['', [Validators.required, Validators.email]],
-    clave: ['', [Validators.minLength(6)]],
-    rol: ['AGENTE' as RolUsuario, [Validators.required]],
-    estado: ['ACTIVO' as EstadoUsuario, [Validators.required]],
+    nombre: ["", [Validators.required, Validators.minLength(2)]],
+    apellido: ["", [Validators.required, Validators.minLength(2)]],
+    correo: ["", [Validators.required, Validators.email]],
+    clave: ["", [Validators.minLength(6)]],
+    rol: ["AGENTE" as RolUsuario, [Validators.required]],
+    estado: ["ACTIVO" as EstadoUsuario, [Validators.required]],
   });
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
+    const id = this.route.snapshot.paramMap.get("id");
     if (id) {
       this.isEdit.set(true);
       this.userId = +id;
@@ -69,7 +80,9 @@ export class UsuarioFormComponent implements OnInit {
         });
         this.loading.set(false);
       },
-      error: () => { this.loading.set(false); },
+      error: () => {
+        this.loading.set(false);
+      },
     });
   }
 
@@ -94,16 +107,38 @@ export class UsuarioFormComponent implements OnInit {
 
     if (this.isEdit() && this.userId) {
       this.usuarioService.actualizar(this.userId, usuario).subscribe({
-        next: () => { this.saving.set(false); this.notification.success('Usuario actualizado correctamente'); this.router.navigate(['/usuarios']); },
-        error: () => { this.saving.set(false); },
+        next: () => {
+          this.saving.set(false);
+          this._alertService.getAlert(
+            "Usuario actualizado correctamente",
+            "",
+            "success",
+          );
+          this.router.navigate(["/usuarios"]);
+        },
+        error: () => {
+          this.saving.set(false);
+        },
       });
     } else {
       this.usuarioService.crear(usuario).subscribe({
-        next: () => { this.saving.set(false); this.notification.success('Usuario creado correctamente'); this.router.navigate(['/usuarios']); },
-        error: () => { this.saving.set(false); },
+        next: () => {
+          this.saving.set(false);
+          this._alertService.getAlert(
+            "Usuario creado correctamente",
+            "",
+            "success",
+          );
+          this.router.navigate(["/usuarios"]);
+        },
+        error: () => {
+          this.saving.set(false);
+        },
       });
     }
   }
 
-  cancel(): void { this.router.navigate(['/usuarios']); }
+  cancel(): void {
+    this.router.navigate(["/usuarios"]);
+  }
 }

@@ -14,9 +14,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { OperacionService } from '../../../core/services/operacion.service';
-import { NotificationService } from '../../../core/services/notification.service';
-import { DialogService } from '../../../shared/services/dialog.service';
+import { OperacionService } from "../../../core/services/operacion.service";
+import { DialogService } from "../../../shared/services/dialog.service";
 import {
   Operacion,
   TipoOperacion,
@@ -26,6 +25,7 @@ import {
   ApiResponse,
 } from "../../../core/models/models";
 import { LoadingSpinnerComponent } from "../../../shared/components/loading-spinner/loading-spinner.component";
+import { AlertService } from "../../../shared/services/alert.service";
 
 @Component({
   selector: "app-operacion-list",
@@ -53,7 +53,7 @@ import { LoadingSpinnerComponent } from "../../../shared/components/loading-spin
 export class OperacionListComponent implements OnInit {
   private operacionService = inject(OperacionService);
   private router = inject(Router);
-  private notification = inject(NotificationService);
+  private _alertService = inject(AlertService);
   private dialogService = inject(DialogService);
 
   loading = signal(true);
@@ -170,7 +170,11 @@ export class OperacionListComponent implements OnInit {
         if (confirmado && op.id) {
           this.operacionService.eliminar(op.id).subscribe({
             next: () => {
-              this.notification.success("Operación eliminada correctamente");
+              this._alertService.getAlert(
+                "Operación eliminada correctamente",
+                "",
+                "success",
+              );
               this.buscar();
             },
           });

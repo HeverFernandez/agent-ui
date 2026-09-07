@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://localhost:8080/api',
+  apiUrl: "https://agentserver-92kr.onrender.com/api",
   useMockAuth: true,
 };

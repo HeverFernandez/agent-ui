@@ -9,10 +9,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../../../core/services/auth.service';
-import { NotificationService } from '../../../core/services/notification.service';
+import { AlertService } from "../../../shared/services/alert.service";
 
 @Component({
-  selector: 'app-login',
+  selector: "app-login",
   standalone: true,
   imports: [
     CommonModule,
@@ -24,22 +24,22 @@ import { NotificationService } from '../../../core/services/notification.service
     MatIconModule,
     MatProgressSpinnerModule,
   ],
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
+  templateUrl: "./login.component.html",
+  styleUrls: ["./login.component.scss"],
 })
 export class LoginComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  private notification = inject(NotificationService);
+  private _alertService = inject(AlertService);
 
   loading = signal(false);
   hidePassword = signal(true);
 
   loginForm = this.fb.group({
-    correo: ['', [Validators.required, Validators.email]],
-    clave: ['', [Validators.required, Validators.minLength(6)]],
+    correo: ["", [Validators.required, Validators.email]],
+    clave: ["", [Validators.required, Validators.minLength(6)]],
   });
 
   submit(): void {
@@ -53,13 +53,24 @@ export class LoginComponent {
     this.authService.login(this.loginForm.value as any).subscribe({
       next: () => {
         this.loading.set(false);
-        this.notification.success('Bienvenido a Nuvanta');
-        const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
+        this._alertService.getAlert(
+          "Bienvenido a Nuvanta",
+          "Has iniciado sesión correctamente",
+          "success",
+          3000,
+        );
+        const returnUrl =
+          this.route.snapshot.queryParams["returnUrl"] || "/dashboard";
         this.router.navigate([returnUrl]);
       },
       error: (err) => {
         this.loading.set(false);
-        this.notification.error(err.message || 'Credenciales inválidas');
+        this._alertService.getAlert(
+          "Error",
+          err.message || "Credenciales inválidas",
+          "error",
+          3000,
+        );
       },
     });
   }
@@ -68,16 +79,16 @@ export class LoginComponent {
     this.hidePassword.update((v) => !v);
   }
 
-  fillDemo(role: 'admin' | 'agente'): void {
-    if (role === 'admin') {
+  fillDemo(role: "admin" | "agente"): void {
+    if (role === "admin") {
       this.loginForm.patchValue({
-        correo: 'admin@nuvanta.com',
-        clave: 'admin123',
+        correo: "admin@nuvanta.com",
+        clave: "admin123",
       });
     } else {
       this.loginForm.patchValue({
-        correo: 'agente@nuvanta.com',
-        clave: 'agente123',
+        correo: "agente@nuvanta.com",
+        clave: "agente123",
       });
     }
   }

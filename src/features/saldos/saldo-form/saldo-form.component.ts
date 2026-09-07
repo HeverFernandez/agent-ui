@@ -11,12 +11,16 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { SaldoService } from '../../../core/services/saldo.service';
-import { EntidadService } from '../../../core/services/entidad.service';
-import { NotificationService } from '../../../core/services/notification.service';
-import { AuthService } from '../../../core/services/auth.service';
-import { Saldo, EntidadFinanciera, EstadoSaldo } from '../../../core/models/models';
-import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
-import { EntidadSelectorDialogComponent } from '../../../shared/components/entidad-selector-dialog/entidad-selector-dialog.component';
+import { EntidadService } from "../../../core/services/entidad.service";
+import { AuthService } from "../../../core/services/auth.service";
+import {
+  Saldo,
+  EntidadFinanciera,
+  EstadoSaldo,
+} from "../../../core/models/models";
+import { LoadingSpinnerComponent } from "../../../shared/components/loading-spinner/loading-spinner.component";
+import { EntidadSelectorDialogComponent } from "../../../shared/components/entidad-selector-dialog/entidad-selector-dialog.component";
+import { AlertService } from "../../../shared/services/alert.service";
 
 @Component({
   selector: "app-saldo-form",
@@ -42,7 +46,7 @@ export class SaldoFormComponent implements OnInit {
   private entidadService = inject(EntidadService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private notification = inject(NotificationService);
+  private _alertService = inject(AlertService);
   private authService = inject(AuthService);
   private dialog = inject(MatDialog);
 
@@ -137,8 +141,10 @@ export class SaldoFormComponent implements OnInit {
     this.form.updateValueAndValidity();
 
     if (this.form.invalid) {
-      this.notification.warning(
+      this._alertService.getAlert(
         "Complete los campos obligatorios antes de asignar el saldo",
+        "",
+        "warning",
       );
       return;
     }
@@ -154,7 +160,11 @@ export class SaldoFormComponent implements OnInit {
       this.saldoService.actualizar(this.saldoId, saldo).subscribe({
         next: () => {
           this.saving.set(false);
-          this.notification.success("Saldo actualizado correctamente");
+          this._alertService.getAlert(
+            "Saldo actualizado correctamente",
+            "",
+            "success",
+          );
           this.router.navigate(["/saldos"]);
         },
         error: () => {
@@ -166,7 +176,11 @@ export class SaldoFormComponent implements OnInit {
       this.saldoService.crear(saldo).subscribe({
         next: () => {
           this.saving.set(false);
-          this.notification.success("Saldo asignado correctamente");
+          this._alertService.getAlert(
+            "Saldo asignado correctamente",
+            "",
+            "success",
+          );
           this.router.navigate(["/saldos"]);
         },
         error: () => {
