@@ -17,8 +17,8 @@ jobs:
         with:
           node-version: 24.6.0
 
-      - name: Install packages #Instala las dependencias del proyecto usando npm i.
-        run: npm i
+      - name: Install packages #Instala las dependencias del proyecto usando npm ci.
+        run: npm ci --legacy-peer-deps
 
       - name: Bundle #Copila el proyecto
         run: npm run build:prod
