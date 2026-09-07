@@ -12,7 +12,7 @@
 
   <mat-card class="filter-card">
     <div class="filters">
-      <mat-form-field appearance="outline" class="filter-field">
+      <mat-form-field appearance="fill" class="tipo-field">
         <mat-label>Tipo</mat-label>
         <mat-select [value]="filtroTipo()" (selectionChange)="filtroTipo.set($event.value)">
           <mat-option value="">Todos</mat-option>
@@ -22,7 +22,7 @@
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="filter-field">
+      <mat-form-field appearance="fill" class="tipo-field">
         <mat-label>Estado</mat-label>
         <mat-select [value]="filtroEstado()" (selectionChange)="filtroEstado.set($event.value)">
           <mat-option value="">Todos</mat-option>
@@ -33,7 +33,7 @@
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="filter-field">
+      <mat-form-field appearance="fill" class="tipo-field">
         <mat-label>Desde</mat-label>
         <mat-icon matPrefix>event</mat-icon>
         <input matInput [matDatepicker]="inicioPicker" [value]="fechaInicio()" (dateInput)="fechaInicio.set($any($event.target).value)" />
@@ -41,7 +41,7 @@
         <mat-datepicker #inicioPicker></mat-datepicker>
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="filter-field">
+      <mat-form-field appearance="fill" class="tipo-field">
         <mat-label>Hasta</mat-label>
         <mat-icon matPrefix>event</mat-icon>
         <input matInput [matDatepicker]="finPicker" [value]="fechaFin()" (dateInput)="fechaFin.set($any($event.target).value)" />

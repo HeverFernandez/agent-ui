@@ -12,13 +12,13 @@
 
   <mat-card class="filter-card">
     <div class="filters">
-      <mat-form-field appearance="outline" class="search-field">
+      <mat-form-field appearance="fill" class="search-field">
         <mat-label>Buscar</mat-label>
         <mat-icon matPrefix>search</mat-icon>
         <input matInput (keyup)="applyFilter($event)" placeholder="Entidad o usuario..." />
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="estado-field">
+      <mat-form-field appearance="fill" class="tipo-field">
         <mat-label>Estado</mat-label>
         <mat-select [value]="filtroEstado()" (selectionChange)="filtrarPorEstado($event.value)">
           <mat-option value="">Todos</mat-option>

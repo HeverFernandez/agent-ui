@@ -18,7 +18,7 @@
 
   <mat-card class="filter-card">
     <div class="filters">
-      <mat-form-field appearance="outline" class="filter-field">
+      <mat-form-field appearance="fill" class="tipo-field">
         <mat-label>Entidad</mat-label>
         <mat-icon matPrefix>account_balance</mat-icon>
         <mat-select [value]="entidadFiltro()" (selectionChange)="entidadFiltro.set($event.value)">
@@ -29,7 +29,7 @@
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="filter-field">
+      <mat-form-field appearance="fill" class="tipo-field">
         <mat-label>Desde</mat-label>
         <mat-icon matPrefix>event</mat-icon>
         <input matInput [matDatepicker]="inicioPicker" [value]="fechaInicio()" (dateInput)="fechaInicio.set($any($event.target).value)" />
@@ -37,7 +37,7 @@
         <mat-datepicker #inicioPicker></mat-datepicker>
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="filter-field">
+      <mat-form-field appearance="fill" class="tipo-field">
         <mat-label>Hasta</mat-label>
         <mat-icon matPrefix>event</mat-icon>
         <input matInput [matDatepicker]="finPicker" [value]="fechaFin()" (dateInput)="fechaFin.set($any($event.target).value)" />
