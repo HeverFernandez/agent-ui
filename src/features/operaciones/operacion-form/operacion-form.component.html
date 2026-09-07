@@ -50,7 +50,7 @@
             }
           </mat-form-field>
 
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="fill">
             <mat-label>Fecha</mat-label>
             <mat-icon matPrefix>event</mat-icon>
             <input matInput type="date" formControlName="fechaOperacion" />
@@ -61,7 +61,7 @@
         </div>
 
         <div class="form-row">
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="fill">
             <mat-label>Número de Referencia</mat-label>
             <mat-icon matPrefix>receipt</mat-icon>
             <input matInput formControlName="numeroReferencia" placeholder="Ej: REF-001234" />
@@ -83,14 +83,14 @@
         </div>
 
         @if (form.get('tipoOperacion')?.value === 'PAGO_SERVICIO') {
-          <mat-form-field appearance="outline" class="full-width">
+          <mat-form-field appearance="fill" class="full-width">
             <mat-label>Servicio Pagado</mat-label>
             <mat-icon matPrefix>receipt_long</mat-icon>
             <input matInput formControlName="servicioPagado" placeholder="Ej: Agua, Luz, Internet..." />
           </mat-form-field>
         }
 
-        <mat-form-field appearance="outline" class="full-width">
+        <mat-form-field appearance="fill" class="full-width">
           <mat-label>Descripción</mat-label>
           <mat-icon matPrefix>notes</mat-icon>
           <textarea matInput formControlName="descripcionOperacion" rows="3" placeholder="Descripción de la operación..."></textarea>
@@ -99,7 +99,7 @@
           }
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="full-width">
+        <mat-form-field appearance="fill" class="full-width">
           <mat-label>Usuario Registro</mat-label>
           <mat-icon matPrefix>person</mat-icon>
           <input matInput formControlName="usuarioRegistro" />

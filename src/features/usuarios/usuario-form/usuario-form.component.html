@@ -13,7 +13,7 @@
     <mat-card class="form-card">
       <form [formGroup]="form" (ngSubmit)="save()" class="usuario-form">
         <div class="form-row">
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="fill">
             <mat-label>Nombre</mat-label>
             <mat-icon matPrefix>person</mat-icon>
             <input matInput formControlName="nombre" />
@@ -21,7 +21,7 @@
             @if (form.get('nombre')?.hasError('minlength') && form.get('nombre')?.touched) { <mat-error>Mínimo 2 caracteres</mat-error> }
           </mat-form-field>
 
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="fill">
             <mat-label>Apellido</mat-label>
             <mat-icon matPrefix>person</mat-icon>
             <input matInput formControlName="apellido" />
@@ -30,7 +30,7 @@
           </mat-form-field>
         </div>
 
-        <mat-form-field appearance="outline" class="full-width">
+        <mat-form-field appearance="fill" class="full-width">
           <mat-label>Correo Electrónico</mat-label>
           <mat-icon matPrefix>email</mat-icon>
           <input matInput type="email" formControlName="correo" />
@@ -39,7 +39,7 @@
         </mat-form-field>
 
         @if (!isEdit()) {
-          <mat-form-field appearance="outline" class="full-width">
+          <mat-form-field appearance="fill" class="full-width">
             <mat-label>Contraseña</mat-label>
             <mat-icon matPrefix>lock</mat-icon>
             <input matInput type="password" formControlName="clave" />
@@ -48,7 +48,7 @@
         }
 
         <div class="form-row">
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="fill">
             <mat-label>Rol</mat-label>
             <mat-icon matPrefix>badge</mat-icon>
             <mat-select formControlName="rol">
@@ -57,7 +57,7 @@
             </mat-select>
           </mat-form-field>
 
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="fill">
             <mat-label>Estado</mat-label>
             <mat-icon matPrefix>toggle_on</mat-icon>
             <mat-select formControlName="estado">

@@ -12,7 +12,7 @@
 
     <form [formGroup]="registerForm" (ngSubmit)="submit()" class="register-form">
       <div class="form-row">
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="fill">
           <mat-label>Nombre</mat-label>
           <mat-icon matPrefix>person</mat-icon>
           <input matInput formControlName="nombre" />
@@ -24,7 +24,7 @@
           }
         </mat-form-field>
 
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="fill">
           <mat-label>Apellido</mat-label>
           <mat-icon matPrefix>person</mat-icon>
           <input matInput formControlName="apellido" />
@@ -37,7 +37,7 @@
         </mat-form-field>
       </div>
 
-      <mat-form-field appearance="outline" class="full-width">
+      <mat-form-field appearance="fill" class="full-width">
         <mat-label>Correo electrónico</mat-label>
         <mat-icon matPrefix>email</mat-icon>
         <input matInput type="email" formControlName="correo" />
@@ -49,7 +49,7 @@
         }
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="full-width">
+      <mat-form-field appearance="fill" class="full-width">
         <mat-label>Contraseña</mat-label>
         <mat-icon matPrefix>lock</mat-icon>
         <input
@@ -73,7 +73,7 @@
         }
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="full-width">
+      <mat-form-field appearance="fill" class="full-width">
         <mat-label>Rol</mat-label>
         <mat-icon matPrefix>badge</mat-icon>
         <mat-select formControlName="rol">

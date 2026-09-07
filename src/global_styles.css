@@ -314,3 +314,6 @@ mat-error {
 .mat-mdc-paginator-page-size-label {
   display: none;
 }
+mat-paginator .mat-mdc-select-trigger {
+  padding: 0px 10px!important;
+}

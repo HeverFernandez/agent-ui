@@ -48,7 +48,7 @@
 
       <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="profile-form">
         <div class="form-row">
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="fill">
             <mat-label>Nombre</mat-label>
             <mat-icon matPrefix>person</mat-icon>
             <input matInput formControlName="nombre" />
@@ -57,7 +57,7 @@
             }
           </mat-form-field>
 
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="fill">
             <mat-label>Apellido</mat-label>
             <mat-icon matPrefix>person</mat-icon>
             <input matInput formControlName="apellido" />
@@ -67,7 +67,7 @@
           </mat-form-field>
         </div>
 
-        <mat-form-field appearance="outline" class="full-width">
+        <mat-form-field appearance="fill" class="full-width">
           <mat-label>Correo electrónico</mat-label>
           <mat-icon matPrefix>email</mat-icon>
           <input matInput formControlName="correo" />

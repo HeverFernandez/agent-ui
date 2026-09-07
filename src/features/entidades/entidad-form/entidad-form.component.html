@@ -15,7 +15,7 @@
   } @else {
     <mat-card class="form-card">
       <form [formGroup]="form" (ngSubmit)="save()" class="entidad-form">
-        <mat-form-field appearance="outline" class="full-width">
+        <mat-form-field appearance="fill" class="full-width">
           <mat-label>Denominación Entidad</mat-label>
           <mat-icon matPrefix>account_balance</mat-icon>
           <input matInput formControlName="denominacion" placeholder="Ej: Banco de Crédito" />
@@ -27,14 +27,14 @@
           }
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="full-width">
+        <mat-form-field appearance="fill" class="full-width">
           <mat-label>Descripción</mat-label>
           <mat-icon matPrefix>notes</mat-icon>
           <textarea matInput formControlName="descripcion" rows="3"></textarea>
         </mat-form-field>
 
         <div class="form-row">
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="fill" class="tipo-field">
             <mat-label>Tipo de Entidad</mat-label>
             <mat-icon matPrefix>category</mat-icon>
             <mat-select formControlName="tipoEntidad">

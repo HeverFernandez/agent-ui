@@ -110,7 +110,9 @@ export class EntidadListComponent implements OnInit {
   }
 
   editar(entidad: EntidadFinanciera): void {
-    this.router.navigate(["/entidades/editar", entidad.idEntidad]);
+    console.log(entidad);
+    
+    this.router.navigate(["/entidades/editar", entidad.id]);
   }
 
   eliminar(entidad: EntidadFinanciera): void {
@@ -122,8 +124,8 @@ export class EntidadListComponent implements OnInit {
         "Cancelar",
       )
       .subscribe((confirmado) => {
-        if (confirmado && entidad.idEntidad) {
-          this.entidadService.eliminar(entidad.idEntidad).subscribe({
+        if (confirmado && entidad.id) {
+          this.entidadService.eliminar(entidad.id).subscribe({
             next: () => {
               this._alertService.getAlert(
                 "Entidad eliminada correctamente",

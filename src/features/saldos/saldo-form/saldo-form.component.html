@@ -1,8 +1,16 @@
 <div class="page-container slide-in-up">
   <div class="page-header">
     <div>
-      <h1 class="page-title">{{ isEdit() ? 'Editar Saldo' : 'Asignar Saldo' }}</h1>
-      <p class="page-subtitle">{{ isEdit() ? 'Modifique los datos del saldo' : 'Asigne un nuevo saldo a una entidad' }}</p>
+      <h1 class="page-title">
+        {{ isEdit() ? "Editar Saldo" : "Asignar Saldo" }}
+      </h1>
+      <p class="page-subtitle">
+        {{
+          isEdit()
+            ? "Modifique los datos del saldo"
+            : "Asigne un nuevo saldo a una entidad"
+        }}
+      </p>
     </div>
     <button mat-button (click)="cancel()">
       <mat-icon>arrow_back</mat-icon>
@@ -15,49 +23,90 @@
   } @else {
     <mat-card class="form-card">
       <form [formGroup]="form" (ngSubmit)="save()" class="saldo-form">
-        <mat-form-field appearance="outline" class="full-width">
+        <mat-form-field appearance="fill" class="full-width">
           <mat-label>Entidad Financiera</mat-label>
           <mat-icon matPrefix>account_balance</mat-icon>
-          <input matInput readonly [value]="entidadSeleccionada() ? entidadSeleccionada()!.denominacion + ' (' + entidadSeleccionada()!.codigoEntidad + ')' : ''" placeholder="Seleccione una entidad" (click)="seleccionarEntidad()" />
-          <button mat-icon-button matSuffix type="button" aria-label="Seleccionar entidad" (click)="seleccionarEntidad()">
+          <input
+            matInput
+            readonly
+            [value]="
+              entidadSeleccionada()
+                ? entidadSeleccionada()!.denominacion +
+                  ' (' +
+                  entidadSeleccionada()!.codigoEntidad +
+                  ')'
+                : ''
+            "
+            placeholder="Seleccione una entidad"
+            (click)="seleccionarEntidad()"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            aria-label="Seleccionar entidad"
+            (click)="seleccionarEntidad()"
+          >
             <mat-icon>search</mat-icon>
           </button>
-          @if (form.get('entidadFinancieraId')?.hasError('required') && form.get('entidadFinancieraId')?.touched) {
+          @if (
+            form.get("entidadFinancieraId")?.hasError("required") &&
+            form.get("entidadFinancieraId")?.touched
+          ) {
             <mat-error>Seleccione una entidad</mat-error>
           }
         </mat-form-field>
 
         <div class="form-row">
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="fill">
             <mat-label>Monto Inicial</mat-label>
             <mat-icon matPrefix>payments</mat-icon>
-            <input matInput type="number" formControlName="montoInicial"  step="0.01" min="0" />
-            @if (form.get('montoInicial')?.hasError('required') && form.get('montoInicial')?.touched) {
+            <input
+              matInput
+              type="number"
+              formControlName="montoInicial"
+              step="0.01"
+              min="0"
+            />
+            @if (
+              form.get("montoInicial")?.hasError("required") &&
+              form.get("montoInicial")?.touched
+            ) {
               <mat-error>El monto inicial es obligatorio</mat-error>
             }
-            @if (form.get('montoInicial')?.hasError('min') && form.get('montoInicial')?.touched) {
+            @if (
+              form.get("montoInicial")?.hasError("min") &&
+              form.get("montoInicial")?.touched
+            ) {
               <mat-error>Debe ser mayor a 0</mat-error>
             }
           </mat-form-field>
         </div>
         <div class="form-row">
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="fill">
             <mat-label>Usuario Asignador</mat-label>
             <mat-icon matPrefix>person</mat-icon>
             <input matInput formControlName="usuarioAsignador" />
-            
           </mat-form-field>
-
         </div>
         <div class="form-actions">
-          <button class="btn warning-button" type="button" (click)="cancel()">Cancelar</button>
-          <button class="btn primary-button" type="submit" [disabled]="saving()">
+          <button class="btn warning-button" type="button" (click)="cancel()">
+            Cancelar
+          </button>
+          <button
+            class="btn primary-button"
+            type="submit"
+            [disabled]="saving()"
+          >
             @if (saving()) {
-              <mat-progress-spinner diameter="20" mode="indeterminate"></mat-progress-spinner>
+              <mat-progress-spinner
+                diameter="20"
+                mode="indeterminate"
+              ></mat-progress-spinner>
             } @else {
               <ng-container>
                 <mat-icon>save</mat-icon>
-                {{ isEdit() ? 'Actualizar' : 'Asignar' }}
+                {{ isEdit() ? "Actualizar" : "Asignar" }}
               </ng-container>
             }
           </button>

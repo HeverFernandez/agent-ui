@@ -1,14 +1,14 @@
 <h2 mat-dialog-title>Seleccionar entidad financiera</h2>
 
 <mat-dialog-content>
-  <mat-form-field appearance="outline" class="search-field">
+  <mat-form-field appearance="fill" class="search-field">
     <mat-label>Buscar entidad</mat-label>
     <mat-icon matPrefix>search</mat-icon>
     <input matInput [(ngModel)]="searchText" placeholder="Nombre o código" />
   </mat-form-field>
 
   <div class="entidad-list">
-    @for (entidad of entidadesFiltradas; track entidad.idEntidad) {
+    @for (entidad of entidadesFiltradas; track entidad.id) {
       <button type="button" class="entidad-option" (click)="seleccionar(entidad)">
         <span class="entidad-icon"><mat-icon>account_balance</mat-icon></span>
         <span class="entidad-info">
