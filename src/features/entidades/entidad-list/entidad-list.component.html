@@ -4,7 +4,7 @@
       <h1 class="page-title">Entidades Bancarias</h1>
       <p class="page-subtitle">Gestión de entidades financieras registradas</p>
     </div>
-    <button class="primary-button" (click)="crear()">
+    <button class="btn primary-button" (click)="crear()">
       <mat-icon>add</mat-icon>
       Nueva Entidad
     </button>
@@ -110,6 +110,7 @@
         [pageSizeOptions]="pageSizeOptions"
         (page)="onPageChange($event)"
         aria-label="Paginación de entidades"
+        [showFirstLastButtons]="true"
       ></mat-paginator>
     </mat-card>
   }

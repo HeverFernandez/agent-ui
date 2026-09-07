@@ -260,14 +260,12 @@ router-outlet + * {
   background: var(--color-blanco) !important;
 }
 
-.primary-button {
-  padding: 5px;
+.btn {
+  padding: 5px 24px !important;
   margin-top: 8px;
   border-radius: 24px;
   font-size: 16px;
   font-weight: 500;
-  color: var(--color-primario);
-  border: 2px solid var(--color-primario);
   justify-content: center;
   items-align: center;
   display: flex;
@@ -278,21 +276,41 @@ router-outlet + * {
     box-shadow var(--transicion);
 }
 
+.primary-button {
+  color: var(--color-primario);
+  border: 2px solid var(--color-primario);
+}
+
 .primary-button:hover {
   background-color: var(--color-primario);
   color: var(--color-blanco);
   box-shadow: var(--sombra-media);
 }
+.warning-button {
+  color: var(--color-warning);
+  border: 2px solid var(--color-warning);
+}
 
-  .tipo-field {
-    flex: 0 1 200px;
-    mat-option {
-      background: white!important;
-      :hover {
-        color: var(--color-primario)!important;
-        font-weight: 900!important;
-      }
+.warning-button:hover {
+  background-color: var(--color-warning);
+  color: var(--color-blanco);
+  box-shadow: var(--sombra-media);
+}
+.tipo-field {
+  flex: 0 1 200px;
+  mat-option {
+    background: white !important;
+    :hover {
+      color: var(--color-primario) !important;
+      font-weight: 900 !important;
     }
   }
+}
 
-
+mat-error {
+  font-size: 12px!important;
+  color: var(--color-error)!important;
+}
+.mat-mdc-paginator-page-size-label {
+  display: none;
+}
