@@ -42,7 +42,7 @@ export interface Saldo {
   idEntidad: number;
   entidadFinanciera?: EntidadFinanciera;
   entidadDenominacion?: string;
-  entidadFinancieraId?: number;
+  entidadFinancieraId: number;
   montoInicial: number;
   montoDisponible: number;
   fechaAsignacion: string;

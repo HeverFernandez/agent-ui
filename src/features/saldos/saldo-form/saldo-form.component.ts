@@ -57,6 +57,7 @@ export class SaldoFormComponent implements OnInit {
   saldoId: number | null = null;
   entidades = signal<EntidadFinanciera[]>([]);
   entidadSeleccionada = signal<EntidadFinanciera | null>(null);
+  isFinancialEntityId = signal<number>(0);
 
   // TODO: el back tiene que agregar el usuario por el token, entonces debemos eliminar el campo de usuarioAsignador del form y del modelo Saldo, y no enviarlo al back
   form = this.fb.group({
@@ -96,6 +97,7 @@ export class SaldoFormComponent implements OnInit {
     this.saldoService.obtenerPorId(id).subscribe({
       next: (response) => {
         const saldo = response.data;
+        this.isFinancialEntityId.set(saldo.entidadFinancieraId);
         this.form.patchValue({
           entidadFinancieraId: saldo.idEntidad,
           montoInicial: saldo.montoInicial,
@@ -128,13 +130,19 @@ export class SaldoFormComponent implements OnInit {
   }
 
   private actualizarEntidadSeleccionada(): void {
-    const idEntidad = 4;
-    console.log("ID de entidad seleccionada:", idEntidad);
-
     this.entidadSeleccionada.set(
-      this.entidades().find((entidad) => entidad.idEntidad === idEntidad) ??
-        null,
+      this.entidades().find(
+        (entidad) => entidad.id === this.isFinancialEntityId(),
+      ) ?? null,
     );
+    if (this.entidadSeleccionada()) {
+      console.log(this.entidadSeleccionada());
+
+      this.form.patchValue({
+        entidadFinancieraId: this.entidadSeleccionada()!.id,
+      });
+      this.form.get("entidadFinancieraId")?.markAsTouched();
+    }
   }
 
   save(): void {
