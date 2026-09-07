@@ -1,15 +1,21 @@
-import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { OperacionService } from '../../../core/services/operacion.service';
+import {
+  Component,
+  inject,
+  signal,
+  OnInit,
+  ChangeDetectionStrategy,
+} from "@angular/core";
+import { CommonModule, JsonPipe } from "@angular/common";
+import { ReactiveFormsModule, FormBuilder, Validators } from "@angular/forms";
+import { ActivatedRoute, Router } from "@angular/router";
+import { MatCardModule } from "@angular/material/card";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatSelectModule } from "@angular/material/select";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { OperacionService } from "../../../core/services/operacion.service";
 import { EntidadService } from "../../../core/services/entidad.service";
 import { AuthService } from "../../../core/services/auth.service";
 import {
@@ -56,17 +62,12 @@ export class OperacionFormComponent implements OnInit {
   entidades = signal<EntidadFinanciera[]>([]);
 
   form = this.fb.group({
-    idEntidad: [null as number | null, [Validators.required]],
+    idEntidadFinanciera: [null as number | null, [Validators.required]],
     tipoOperacion: ["RETIRO", [Validators.required]],
     montoOperacion: [0, [Validators.required, Validators.min(0.01)]],
     descripcionOperacion: ["", [Validators.required]],
-    fechaOperacion: [
-      new Date().toISOString().split("T")[0],
-      [Validators.required],
-    ],
     numeroReferencia: ["", [Validators.required]],
-    usuarioRegistro: ["aitamh", [Validators.required]],
-    estadoOperacion: ["COMPLETADA" as EstadoOperacion, [Validators.required]],
+    usuarioId: ["", [Validators.required]],
     servicioPagado: [""],
   });
 
@@ -74,8 +75,10 @@ export class OperacionFormComponent implements OnInit {
     this.loadEntidades();
     const user = this.authService.currentUser();
     if (user) {
+      console.log(user);
+
       this.form.patchValue({
-        usuarioRegistro: `${user.nombre} ${user.apellido}`,
+        usuarioId: user.idUsuario?.toString(),
       });
     }
     const id = this.route.snapshot.paramMap.get("id");
@@ -100,15 +103,11 @@ export class OperacionFormComponent implements OnInit {
       next: (response) => {
         const op = response.data;
         this.form.patchValue({
-          idEntidad: op.idEntidad,
+          idEntidadFinanciera: op.id,
           tipoOperacion: op.tipoOperacion,
           montoOperacion: op.montoOperacion,
           descripcionOperacion: op.descripcionOperacion,
-          fechaOperacion: op.fechaOperacion?.split("T")[0] || "",
           numeroReferencia: op.numeroReferencia,
-          usuarioRegistro: op.usuarioRegistro,
-          estadoOperacion: op.estadoOperacion,
-          servicioPagado: op.servicioPagado,
         });
         this.loading.set(false);
       },
@@ -131,18 +130,19 @@ export class OperacionFormComponent implements OnInit {
       return;
     }
     this.saving.set(true);
-    let operacion: Operacion = {
+    let operacion: any = {
       id: this.operacionId,
-      idEntidad: this.form.value.idEntidad!,
+      idEntidadFinanciera: this.form.value.idEntidadFinanciera!,
       tipoOperacion: this.form.value.tipoOperacion as TipoOperacion,
       montoOperacion: this.form.value.montoOperacion!,
       descripcionOperacion: this.form.value.descripcionOperacion!,
-      fechaOperacion: this.form.value.fechaOperacion!,
       numeroReferencia: this.form.value.numeroReferencia!,
-      usuarioRegistro: this.form.value.usuarioRegistro!,
-      estadoOperacion: this.form.value.estadoOperacion as EstadoOperacion,
+      usuarioId: this.form.value.usuarioId!,
       servicioPagado: this.form.value.servicioPagado || "",
     };
+    if (operacion.tipoOperacion !== "PAGO_SERVICIO") {
+      delete operacion.servicioPagado;
+    }
     if (this.isEdit() && this.operacionId) {
       this.operacionService.actualizar(this.operacionId, operacion).subscribe({
         next: () => {
@@ -154,11 +154,14 @@ export class OperacionFormComponent implements OnInit {
           );
           this.router.navigate(["/operaciones"]);
         },
-        error: () => {
+        error: (error) => {
           this.saving.set(false);
         },
       });
     } else {
+      delete operacion.id;
+
+      console.log(operacion);
       this.operacionService.crear(operacion).subscribe({
         next: () => {
           this.saving.set(false);

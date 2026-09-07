@@ -26,12 +26,12 @@
           <mat-form-field appearance="fill" class="tipo-field">
             <mat-label>Entidad Financiera</mat-label>
             <mat-icon matPrefix>account_balance</mat-icon>
-            <mat-select formControlName="idEntidad">
+            <mat-select formControlName="idEntidadFinanciera">
               @for (entidad of entidades(); track entidad.id) {
                 <mat-option [value]="entidad.id">{{ entidad.denominacion }}</mat-option>
               }
             </mat-select>
-            @if (form.get('idEntidad')?.hasError('required') && form.get('idEntidad')?.touched) {
+            @if (form.get('idEntidadFinanciera')?.hasError('required') && form.get('idEntidadFinanciera')?.touched) {
               <mat-error>Seleccione una entidad</mat-error>
             }
           </mat-form-field>
@@ -49,19 +49,7 @@
               <mat-error>Debe ser mayor a 0</mat-error>
             }
           </mat-form-field>
-
-          <mat-form-field appearance="fill">
-            <mat-label>Fecha</mat-label>
-            <mat-icon matPrefix>event</mat-icon>
-            <input matInput type="date" formControlName="fechaOperacion" />
-            @if (form.get('fechaOperacion')?.hasError('required') && form.get('fechaOperacion')?.touched) {
-              <mat-error>La fecha es obligatoria</mat-error>
-            }
-          </mat-form-field>
-        </div>
-
-        <div class="form-row">
-          <mat-form-field appearance="fill">
+<mat-form-field appearance="fill">
             <mat-label>Número de Referencia</mat-label>
             <mat-icon matPrefix>receipt</mat-icon>
             <input matInput formControlName="numeroReferencia" placeholder="Ej: REF-001234" />
@@ -69,18 +57,8 @@
               <mat-error>El número de referencia es obligatorio</mat-error>
             }
           </mat-form-field>
-
-          <mat-form-field appearance="fill" class="tipo-field">
-            <mat-label>Estado</mat-label>
-            <mat-icon matPrefix>toggle_on</mat-icon>
-            <mat-select formControlName="estadoOperacion">
-              <mat-option value="PENDIENTE">Pendiente</mat-option>
-              <mat-option value="COMPLETADA">Completada</mat-option>
-              <mat-option value="ANULADA">Anulada</mat-option>
-              <mat-option value="FALLIDA">Fallida</mat-option>
-            </mat-select>
-          </mat-form-field>
         </div>
+
 
         @if (form.get('tipoOperacion')?.value === 'PAGO_SERVICIO') {
           <mat-form-field appearance="fill" class="full-width">
@@ -99,14 +77,6 @@
           }
         </mat-form-field>
 
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Usuario Registro</mat-label>
-          <mat-icon matPrefix>person</mat-icon>
-          <input matInput formControlName="usuarioRegistro" />
-          @if (form.get('usuarioRegistro')?.hasError('required') && form.get('usuarioRegistro')?.touched) {
-            <mat-error>El usuario es obligatorio</mat-error>
-          }
-        </mat-form-field>
 
         <div class="form-actions">
           <button class="btn warning-button" type="button" (click)="cancel()">Cancelar</button>
@@ -125,3 +95,5 @@
     </mat-card>
   }
 </div>
+
+<p>{{form.value|json}}</p>

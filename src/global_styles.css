@@ -317,3 +317,6 @@ mat-error {
 mat-paginator .mat-mdc-select-trigger {
   padding: 0px 10px!important;
 }
+mat-datepicker-content{
+  background-color: var(--color-gris-claro)!important;
+}

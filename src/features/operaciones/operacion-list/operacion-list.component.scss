@@ -1,24 +1,72 @@
-.page-container { max-width: 1200px; margin: 0 auto; }
-
-.filter-card {
-  border-radius: var(--radio-borde); margin-bottom: 16px; box-shadow: var(--sombra-suave);
-  .filters { display: flex; gap: 12px; padding: 8px 16px; flex-wrap: wrap; align-items: center; }
-  .filter-field { flex: 1 1 180px; background-color: #e3f2fd;}
-  .filter-actions { display: flex; gap: 8px; align-items: center; }
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.table-card { border-radius: var(--radio-borde); box-shadow: var(--sombra-suave); overflow: hidden; }
-.monto { font-weight: 600; color: var(--color-primario); }
+.filter-card {
+  border-radius: var(--radio-borde);
+  margin-bottom: 16px;
+  box-shadow: var(--sombra-suave);
+  .filters {
+    display: flex;
+    gap: 12px;
+    padding: 8px 16px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-field {
+    flex: 1 1 180px;
+    background-color: #e3f2fd;
+  }
+  .filter-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+}
+
+.table-card {
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra-suave);
+  overflow: hidden;
+}
+.monto {
+  font-weight: 600;
+  color: var(--color-primario);
+}
 
 .tipo-badge {
-  display: inline-flex; padding: 3px 10px; border-radius: 4px; font-size: 11px; font-weight: 500;
-  &.tipo-retiro { background: #ffebee; color: #c62828; }
-  &.tipo-deposito { background: #e8f5e9; color: #2e7d32; }
-  &.tipo-pago_servicio { background: #e3f2fd; color: #1565c0; }
+  display: inline-flex;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  &.tipo-retiro {
+    background: #ffebee;
+    color: #c62828;
+  }
+  &.tipo-deposito {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+  &.tipo-pago_servicio {
+    background: #e3f2fd;
+    color: #1565c0;
+  }
 }
 
 .empty-state {
-  display: flex; flex-direction: column; align-items: center; padding: 48px; color: var(--color-gris);
-  mat-icon { font-size: 56px; margin-bottom: 12px; }
-  p { font-size: 15px; margin-bottom: 16px; }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px;
+  color: var(--color-gris);
+  mat-icon {
+    font-size: 56px;
+    margin-bottom: 12px;
+  }
+  p {
+    font-size: 15px;
+    margin-bottom: 16px;
+  }
 }
