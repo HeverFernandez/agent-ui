@@ -64,7 +64,7 @@ export class OperacionFormComponent implements OnInit {
       [Validators.required],
     ],
     numeroReferencia: ["", [Validators.required]],
-    usuarioRegistro: ["", [Validators.required]],
+    usuarioRegistro: ["aitamh", [Validators.required]],
     estadoOperacion: ["COMPLETADA" as EstadoOperacion, [Validators.required]],
     servicioPagado: [""],
   });
@@ -130,7 +130,7 @@ export class OperacionFormComponent implements OnInit {
       return;
     }
     this.saving.set(true);
-    const operacion: Operacion = {
+    let operacion: Operacion = {
       id: this.operacionId,
       idEntidad: this.form.value.idEntidad!,
       tipoOperacion: this.form.value.tipoOperacion as TipoOperacion,
@@ -142,7 +142,6 @@ export class OperacionFormComponent implements OnInit {
       estadoOperacion: this.form.value.estadoOperacion as EstadoOperacion,
       servicioPagado: this.form.value.servicioPagado || "",
     };
-
     if (this.isEdit() && this.operacionId) {
       this.operacionService.actualizar(this.operacionId, operacion).subscribe({
         next: () => {

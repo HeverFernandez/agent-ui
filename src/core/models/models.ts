@@ -33,6 +33,7 @@ export interface EntidadFinanciera {
   codigoEntidad: string;
   estadoEntidad: EstadoEntidad;
   fechaRegistro: string | null;
+  id: number | null;
 }
 
 export type EstadoSaldo = 'ACTIVO' | 'AGOTADO' | 'VENCIDO' | 'SUSPENDIDO';
