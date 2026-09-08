@@ -136,6 +136,8 @@ router-outlet + * {
 .hover-card:hover {
   box-shadow: var(--sombra-media);
   transform: translateY(-2px);
+  background-color: color-mix(in srgb, var(--color-primario) 20%, transparent)!important;
+  
 }
 
 /* Status badges */
