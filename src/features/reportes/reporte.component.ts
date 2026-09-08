@@ -150,10 +150,8 @@ export class ReporteComponent implements OnInit {
             op.tipoOperacion.slice(1).toLowerCase();
       porTipo[tipoLabel] = (porTipo[tipoLabel] || 0) + 1;
       porEstado[op.estadoOperacion] = (porEstado[op.estadoOperacion] || 0) + 1;
-      const entidadNombre =
-        op.entidadFinanciera?.denominacion || `Entidad #${op.idEntidad}`;
-      montosPorEntidad[entidadNombre] =
-        (montosPorEntidad[entidadNombre] || 0) + op.montoOperacion;
+      const entidadNombre = op.entidadDenominacion!;
+      montosPorEntidad[entidadNombre] = (montosPorEntidad[entidadNombre] || 0) + op.montoOperacion;
     });
 
     this.chartOperacionesPorTipo.set(
@@ -233,7 +231,7 @@ export class ReporteComponent implements OnInit {
     const data = this.operaciones().map((op) => ({
       ID: op.id,
       Tipo: op.tipoOperacion,
-      Entidad: op.entidadDenominacion || `Entidad #${op.idEntidad}`,
+      Entidad: op.entidadDenominacion,
       Monto: op.montoOperacion,
       Referencia: op.numeroReferencia,
       Descripción: op.descripcionOperacion,

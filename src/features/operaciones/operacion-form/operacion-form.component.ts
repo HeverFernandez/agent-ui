@@ -19,13 +19,14 @@ import { OperacionService } from "../../../core/services/operacion.service";
 import { EntidadService } from "../../../core/services/entidad.service";
 import { AuthService } from "../../../core/services/auth.service";
 import {
-  Operacion,
   EntidadFinanciera,
+  PageResponse,
+  Saldo,
   TipoOperacion,
-  EstadoOperacion,
 } from "../../../core/models/models";
 import { LoadingSpinnerComponent } from "../../../shared/components/loading-spinner/loading-spinner.component";
 import { AlertService } from "../../../shared/services/alert.service";
+import { SaldoService } from "src/core/services/saldo.service";
 
 @Component({
   selector: "app-operacion-form",
@@ -49,7 +50,7 @@ import { AlertService } from "../../../shared/services/alert.service";
 export class OperacionFormComponent implements OnInit {
   private fb = inject(FormBuilder);
   private operacionService = inject(OperacionService);
-  private entidadService = inject(EntidadService);
+  private _saldoService = inject(SaldoService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private _alertService = inject(AlertService);
@@ -59,16 +60,17 @@ export class OperacionFormComponent implements OnInit {
   saving = signal(false);
   isEdit = signal(false);
   operacionId: number | null = null;
-  entidades = signal<EntidadFinanciera[]>([]);
+  entidades = signal<Saldo[] | null>(null);
 
   form = this.fb.group({
     idEntidadFinanciera: [null as number | null, [Validators.required]],
     tipoOperacion: ["RETIRO", [Validators.required]],
     montoOperacion: [0, [Validators.required, Validators.min(0.01)]],
-    descripcionOperacion: ["", [Validators.required]],
+    descripcionOperacion: [""],
     numeroReferencia: ["", [Validators.required]],
     usuarioId: ["", [Validators.required]],
     servicioPagado: [""],
+    comision: [""],
   });
 
   ngOnInit(): void {
@@ -90,9 +92,9 @@ export class OperacionFormComponent implements OnInit {
   }
 
   loadEntidades(): void {
-    this.entidadService.listarActivas().subscribe({
+    this._saldoService.listar().subscribe({
       next: (response) => {
-        this.entidades.set(response.data);
+        this.entidades.set(response.data.content);
       },
     });
   }
