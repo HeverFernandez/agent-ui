@@ -264,6 +264,7 @@ router-outlet + * {
 
 .btn {
   padding: 5px 24px !important;
+  align-items: center!important;
   margin-top: 8px;
   border-radius: 24px;
   font-size: 16px;
@@ -321,4 +322,8 @@ mat-paginator .mat-mdc-select-trigger {
 }
 mat-datepicker-content{
   background-color: var(--color-gris-claro)!important;
+}
+td button mat-icon:hover {
+  color: color-mix(in srgb, var(--color-primario) 60%, transparent)!important;
+
 }

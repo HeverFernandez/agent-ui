@@ -23,7 +23,7 @@
         <mat-icon matPrefix>account_balance</mat-icon>
         <mat-select [value]="entidadFiltro()" (selectionChange)="entidadFiltro.set($event.value)">
           <mat-option value="">Todas</mat-option>
-          @for (entidad of entidades(); track entidad.idEntidad) {
+          @for (entidad of entidades(); track entidad.id) {
             <mat-option [value]="entidad.idEntidad">{{ entidad.denominacion }}</mat-option>
           }
         </mat-select>
