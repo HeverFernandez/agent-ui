@@ -15,7 +15,7 @@ jobs:
       - name: Use Node
         uses: actions/setup-node@v4 #Configura el entorno de Node.js.
         with:
-          node-version: 24.6.0
+          node-version: 26.0.0
 
       - name: Install packages #Instala las dependencias del proyecto usando npm ci.
         run: npm ci --legacy-peer-deps
