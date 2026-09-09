@@ -41,7 +41,7 @@
             <mat-icon matPrefix>account_balance</mat-icon>
             <mat-select formControlName="idEntidadFinanciera">
               @for (entidad of entidades(); track entidad.id) {
-                <mat-option [value]="entidad.id">{{
+                <mat-option [value]="entidad.entidadFinancieraId">{{
                   entidad.entidadDenominacion
                 }}</mat-option>
               }

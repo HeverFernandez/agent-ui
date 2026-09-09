@@ -16,14 +16,8 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { OperacionService } from "../../../core/services/operacion.service";
-import { EntidadService } from "../../../core/services/entidad.service";
 import { AuthService } from "../../../core/services/auth.service";
-import {
-  EntidadFinanciera,
-  PageResponse,
-  Saldo,
-  TipoOperacion,
-} from "../../../core/models/models";
+import { Saldo, TipoOperacion } from "../../../core/models/models";
 import { LoadingSpinnerComponent } from "../../../shared/components/loading-spinner/loading-spinner.component";
 import { AlertService } from "../../../shared/services/alert.service";
 import { SaldoService } from "src/core/services/saldo.service";
@@ -77,8 +71,6 @@ export class OperacionFormComponent implements OnInit {
     this.loadEntidades();
     const user = this.authService.currentUser();
     if (user) {
-      console.log(user);
-
       this.form.patchValue({
         usuarioId: user.idUsuario?.toString(),
       });
@@ -139,7 +131,7 @@ export class OperacionFormComponent implements OnInit {
       montoOperacion: this.form.value.montoOperacion!,
       descripcionOperacion: this.form.value.descripcionOperacion!,
       numeroReferencia: this.form.value.numeroReferencia!,
-      usuarioId: this.form.value.usuarioId!,
+      usuarioId: +this.form.value.usuarioId!,
       servicioPagado: this.form.value.servicioPagado || "",
     };
     if (operacion.tipoOperacion !== "PAGO_SERVICIO") {
