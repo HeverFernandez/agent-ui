@@ -53,7 +53,7 @@ export class AlertService {
     title: string,
     message: string,
     type: string = "info",
-    timeout: number = 5000,
+    timeout: number = 15000,
     redirect?: any,
   ) {
     let snackBar: any = {

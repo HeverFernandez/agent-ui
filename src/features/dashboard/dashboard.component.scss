@@ -46,6 +46,7 @@
   box-shadow: var(--sombra-suave);
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 16px;
 }
 
@@ -66,6 +67,7 @@
 .summary-content {
   display: flex;
   flex-direction: column;
+  text-align: center;
 }
 
 .dashboard-grid {
