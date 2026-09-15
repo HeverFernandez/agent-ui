@@ -1,17 +1,28 @@
-import { Component, inject, signal, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { MatTableModule, MatTableDataSource } from '@angular/material/table';
-import { MatPaginatorModule, MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatSortModule, MatSort } from '@angular/material/sort';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatCardModule } from '@angular/material/card';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import {
+  Component,
+  inject,
+  signal,
+  OnInit,
+  ViewChild,
+  ChangeDetectionStrategy,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Router } from "@angular/router";
+import { MatTableModule, MatTableDataSource } from "@angular/material/table";
+import {
+  MatPaginatorModule,
+  MatPaginator,
+  PageEvent,
+} from "@angular/material/paginator";
+import { MatSortModule, MatSort } from "@angular/material/sort";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatSelectModule } from "@angular/material/select";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatCardModule } from "@angular/material/card";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { EntidadService } from "../../../core/services/entidad.service";
 import { DialogService } from "../../../shared/services/dialog.service";
 import {
@@ -67,6 +78,7 @@ export class EntidadListComponent implements OnInit {
   totalElements = 0;
   pageSize = 10;
   pageIndex = 0;
+  pageType = "";
   pageSizeOptions: number[] = [5, 10, 25, 50];
 
   filtroTipo = signal<TipoEntidad | "">("");
@@ -81,16 +93,22 @@ export class EntidadListComponent implements OnInit {
 
   loadEntidades(): void {
     this.loading.set(true);
-    this.entidadService.listar(this.pageIndex, this.pageSize).subscribe({
-      next: (response: ApiResponse<PageResponse<EntidadFinanciera>>) => {
-        this.dataSource.data = response.data.content;
-        this.totalElements = response.data.totalElements;
-        this.loading.set(false);
-      },
-      error: () => {
-        this.loading.set(false);
-      },
-    });
+    this.entidadService
+      .listar({
+        page: this.pageIndex,
+        size: this.pageSize,
+        tipo: this.filtroTipo(),
+      })
+      .subscribe({
+        next: (response: ApiResponse<PageResponse<EntidadFinanciera>>) => {
+          this.dataSource.data = response.data.content;
+          this.totalElements = response.data.totalElements;
+          this.loading.set(false);
+        },
+        error: () => {
+          this.loading.set(false);
+        },
+      });
   }
 
   applyFilter(event: Event): void {
@@ -110,8 +128,6 @@ export class EntidadListComponent implements OnInit {
   }
 
   editar(entidad: EntidadFinanciera): void {
-    console.log(entidad);
-    
     this.router.navigate(["/entidades/editar", entidad.id]);
   }
 
@@ -141,23 +157,7 @@ export class EntidadListComponent implements OnInit {
 
   filtrarPorTipo(tipo: TipoEntidad | ""): void {
     this.filtroTipo.set(tipo);
-    if (tipo === "") {
-      this.loadEntidades();
-    } else {
-      this.loading.set(true);
-      this.entidadService
-        .listarPorTipo(tipo as TipoEntidad, this.pageIndex, this.pageSize)
-        .subscribe({
-          next: (response) => {
-            this.dataSource.data = response.content;
-            this.totalElements = response.totalElements;
-            this.loading.set(false);
-          },
-          error: () => {
-            this.loading.set(false);
-          },
-        });
-    }
+    this.loadEntidades();
   }
 
   formatDate(date: string | null | undefined): string {

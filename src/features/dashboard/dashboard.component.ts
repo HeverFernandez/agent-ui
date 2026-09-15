@@ -62,9 +62,13 @@ export class DashboardComponent implements OnInit {
     this.loading.set(true);
 
     forkJoin({
-      entidades: this.entidadService.listar(0, 100).pipe(catchError(() => of(null))),
+      entidades: this.entidadService
+        .listar({ page: 0, size: 100 })
+        .pipe(catchError(() => of(null))),
       saldos: this.saldoService.listar(0, 100).pipe(catchError(() => of(null))),
-      operaciones: this.operacionService.listar(0, 5).pipe(catchError(() => of(null))),
+      operaciones: this.operacionService
+        .listar(0, 5)
+        .pipe(catchError(() => of(null))),
     }).subscribe({
       next: ({ entidades, saldos, operaciones }) => {
         if (entidades) {

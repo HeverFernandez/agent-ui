@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResponse, PageResponse, EntidadFinanciera, TipoEntidad } from '../models/models';
+import { OptionsRequest } from "../models";
 
 @Injectable({
   providedIn: "root",
@@ -10,14 +11,22 @@ export class EntidadService {
   constructor(private http: HttpClient) {}
 
   listar(
-    page: number = 0,
-    size: number = 10,
-    sort: string = "idEntidad,asc",
+    options: OptionsRequest,
   ): Observable<ApiResponse<PageResponse<EntidadFinanciera>>> {
-    const params = new HttpParams()
-      .set("page", page.toString())
-      .set("size", size.toString())
-      .set("sort", sort);
+    const {
+      page = 0,
+      size = 10,
+      sortBy = "",
+      tipo = "",
+      direction = "DESC",
+    } = options;
+    const params: any = {
+      page,
+      size,
+      direction: direction || "DESC",
+    };
+    if (sortBy) params.sortBy = sortBy;
+    if (tipo && tipo !== "All") params.tipo = tipo;
     return this.http.get<ApiResponse<PageResponse<EntidadFinanciera>>>(
       "/entidades-financieras",
       { params },
@@ -51,20 +60,6 @@ export class EntidadService {
 
   eliminar(id: number): Observable<ApiResponse<void>> {
     return this.http.delete<ApiResponse<void>>(`/entidades-financieras/${id}`);
-  }
-
-  listarPorTipo(
-    tipo: TipoEntidad,
-    page: number = 0,
-    size: number = 10,
-  ): Observable<PageResponse<EntidadFinanciera>> {
-    const params = new HttpParams()
-      .set("page", page.toString())
-      .set("size", size.toString());
-    return this.http.get<PageResponse<EntidadFinanciera>>(
-      `/entidades-financieras/tipo/${tipo}`,
-      { params },
-    );
   }
 
   listarActivas(): Observable<ApiResponse<EntidadFinanciera[]>> {
