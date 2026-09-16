@@ -16,7 +16,7 @@ import {
   MatPaginator,
   PageEvent,
 } from "@angular/material/paginator";
-import { MatSortModule, MatSort } from "@angular/material/sort";
+import { MatSortModule, MatSort, Sort } from "@angular/material/sort";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
@@ -67,10 +67,9 @@ export class EntidadListComponent implements OnInit {
   loading = signal(true);
   dataSource = new MatTableDataSource<EntidadFinanciera>([]);
   displayedColumns: string[] = [
-    "idEntidad",
+    "codigoEntidad",
     "denominacion",
     "tipoEntidad",
-    "codigoEntidad",
     "descripcion",
     "estado",
     "createdAt",
@@ -84,6 +83,8 @@ export class EntidadListComponent implements OnInit {
   pageSizeOptions: number[] = [5, 10, 25, 50];
 
   filtroTipo = signal<TipoEntidad | "">("");
+  sortBy = signal("");
+  direction = signal<"ASC" | "DESC">("ASC");
   searchText = signal("");
   initialValue = signal<string>("");
   valueSearch = signal<string>("");
@@ -97,19 +98,21 @@ export class EntidadListComponent implements OnInit {
   }
 
   loadEntidades(): void {
-    this.loading.set(true);
+    // this.loading.set(true);
     this.entidadService
       .listar({
         page: this.pageIndex,
         size: this.pageSize,
         tipo: this.filtroTipo(),
         searchTerm: this.valueSearch(),
+        sortBy: this.sortBy(),
+        direction: this.direction(),
       })
       .subscribe({
         next: (response: ApiResponse<PageResponse<EntidadFinanciera>>) => {
           this.dataSource.data = response.data.content;
           this.totalElements = response.data.totalElements;
-          this.loading.set(false);
+          // this.loading.set(false);
         },
         error: () => {
           this.loading.set(false);
@@ -185,4 +188,17 @@ export class EntidadListComponent implements OnInit {
       clearTimeout(timeout);
     });
   });
+
+  sortData(sort: Sort) {
+    console.log(sort);
+    this.sortBy.set(sort.active);
+    this.direction.set(sort.direction as any);
+    if (sort.direction === "") {
+      this.sortBy.set("");
+    }
+    this.loadEntidades();
+    if (!sort.active || sort.direction === "") {
+      return;
+    }
+  }
 }

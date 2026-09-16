@@ -24,7 +24,7 @@ export class EntidadService {
     const params: any = {
       page,
       size,
-      direction: direction || "ASC",
+      direction: direction.toUpperCase() || "ASC",
     };
     if (sortBy) params.sortBy = sortBy;
     if (tipo && tipo !== "All") params.tipo = tipo;

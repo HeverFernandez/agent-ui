@@ -41,15 +41,17 @@
     </div>
   </mat-card>
 
-  @if (loading()) {
+  @if (!dataSource.data) {
     <app-loading-spinner />
   } @else {
     <mat-card class="table-card">
       <div class="table-responsive">
-        <table mat-table [dataSource]="dataSource" matSort>
-          <ng-container matColumnDef="idEntidad">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
-            <td mat-cell *matCellDef="let entidad">{{ entidad.id }}</td>
+        <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
+          <ng-container matColumnDef="codigoEntidad">
+            <th mat-header-cell *matHeaderCellDef >Código</th>
+            <td mat-cell *matCellDef="let entidad">
+              {{ entidad.codigoEntidad }}
+            </td>
           </ng-container>
 
           <ng-container matColumnDef="denominacion">
@@ -62,7 +64,7 @@
           </ng-container>
 
           <ng-container matColumnDef="tipoEntidad">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo</th>
+            <th mat-header-cell *matHeaderCellDef >Tipo</th>
             <td mat-cell *matCellDef="let entidad">
               <span
                 class="tipo-badge tipo-{{ entidad.tipoEntidad.toLowerCase() }}"
@@ -70,15 +72,8 @@
               >
             </td>
           </ng-container>
-
-          <ng-container matColumnDef="codigoEntidad">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Código</th>
-            <td mat-cell *matCellDef="let entidad">
-              {{ entidad.codigoEntidad }}
-            </td>
-          </ng-container>
           <ng-container matColumnDef="descripcion">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <th mat-header-cell *matHeaderCellDef >
               Descripción
             </th>
             <td mat-cell *matCellDef="let entidad">
@@ -87,7 +82,7 @@
           </ng-container>
 
           <ng-container matColumnDef="estado">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Estado</th>
+            <th mat-header-cell *matHeaderCellDef >Estado</th>
             <td mat-cell *matCellDef="let entidad">
               <span
                 class="estado-badge"
@@ -99,7 +94,7 @@
           </ng-container>
 
           <ng-container matColumnDef="createdAt">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Registro</th>
+            <th mat-header-cell *matHeaderCellDef >Registro</th>
             <td mat-cell *matCellDef="let entidad">
               {{ formatDate(entidad.createdAt) }}
             </td>
