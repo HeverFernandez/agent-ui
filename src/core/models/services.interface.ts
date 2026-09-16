@@ -4,6 +4,7 @@ export interface OptionsRequest {
   sortBy?:        string; //fechaCreacion
   tipo?:          string; //fechaCreacion
   direction?:     'DESC' | 'ASC'; //DESC
+  searchTerm?:     string
 }
 
 export interface DataPaginationResponse {

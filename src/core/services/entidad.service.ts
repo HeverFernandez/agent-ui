@@ -18,15 +18,17 @@ export class EntidadService {
       size = 10,
       sortBy = "",
       tipo = "",
-      direction = "DESC",
+      direction = "ASC",
+      searchTerm = "",
     } = options;
     const params: any = {
       page,
       size,
-      direction: direction || "DESC",
+      direction: direction || "ASC",
     };
     if (sortBy) params.sortBy = sortBy;
     if (tipo && tipo !== "All") params.tipo = tipo;
+    if (searchTerm && searchTerm !== "") params.searchTerm = searchTerm;
     return this.http.get<ApiResponse<PageResponse<EntidadFinanciera>>>(
       "/entidades-financieras",
       { params },

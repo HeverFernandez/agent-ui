@@ -5,6 +5,8 @@ import {
   OnInit,
   ViewChild,
   ChangeDetectionStrategy,
+  effect,
+  linkedSignal,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
@@ -83,6 +85,9 @@ export class EntidadListComponent implements OnInit {
 
   filtroTipo = signal<TipoEntidad | "">("");
   searchText = signal("");
+  initialValue = signal<string>("");
+  valueSearch = signal<string>("");
+  inputValue = linkedSignal<string>(() => this.initialValue() ?? "");
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -98,6 +103,7 @@ export class EntidadListComponent implements OnInit {
         page: this.pageIndex,
         size: this.pageSize,
         tipo: this.filtroTipo(),
+        searchTerm: this.valueSearch(),
       })
       .subscribe({
         next: (response: ApiResponse<PageResponse<EntidadFinanciera>>) => {
@@ -168,4 +174,15 @@ export class EntidadListComponent implements OnInit {
       year: "numeric",
     });
   }
+
+  debounceEffect = effect((onCleanup) => {
+    const value = this.inputValue();
+    const timeout = setTimeout(() => {
+      this.valueSearch.set(value);
+      this.loadEntidades();
+    }, 500);
+    onCleanup(() => {
+      clearTimeout(timeout);
+    });
+  });
 }
