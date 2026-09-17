@@ -71,14 +71,11 @@
           <mat-label>Correo electrónico</mat-label>
           <mat-icon matPrefix>email</mat-icon>
           <input matInput formControlName="correo" />
-          <mat-hint>El correo no puede ser modificado</mat-hint>
         </mat-form-field>
 
         <button
-          mat-raised-button
-          color="primary"
+          class="btn primary-button"
           type="submit"
-          class="save-button"
           [disabled]="loading()"
         >
           <mat-icon>save</mat-icon>

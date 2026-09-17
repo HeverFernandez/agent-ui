@@ -20,7 +20,7 @@ interface MenuItem {
 }
 
 @Component({
-  selector: 'app-main-layout',
+  selector: "app-main-layout",
   standalone: true,
   imports: [
     CommonModule,
@@ -33,9 +33,9 @@ interface MenuItem {
     MatMenuModule,
     MatTooltipModule,
   ],
-  templateUrl: './main-layout.component.html',
+  templateUrl: "./main-layout.component.html",
   changeDetection: ChangeDetectionStrategy.Eager,
-  styleUrls: ['./main-layout.component.scss'],
+  styleUrls: ["./main-layout.component.scss"],
 })
 export class MainLayoutComponent {
   private authService = inject(AuthService);
@@ -47,19 +47,23 @@ export class MainLayoutComponent {
 
   isHandset = signal(false);
   sidenavOpened = signal(true);
-  currentTitle = signal('Dashboard');
+  currentTitle = signal("Panel de control");
 
   menuItems: MenuItem[] = [
-    { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
-    { label: 'Entidades Bancarias', icon: 'account_balance', route: '/entidades' },
-    { label: 'Saldos', icon: 'account_balance_wallet', route: '/saldos' },
-    { label: 'Operaciones', icon: 'swap_horiz', route: '/operaciones' },
-    { label: 'Reportes', icon: 'insert_chart', route: '/reportes' },
-    { label: 'Usuarios', icon: 'people', route: '/usuarios', adminOnly: true },
+    { label: "Panel de control", icon: "dashboard", route: "/dashboard" },
+    {
+      label: "Entidades Bancarias",
+      icon: "account_balance",
+      route: "/entidades",
+    },
+    { label: "Saldos", icon: "account_balance_wallet", route: "/saldos" },
+    { label: "Operaciones", icon: "swap_horiz", route: "/operaciones" },
+    { label: "Reportes", icon: "insert_chart", route: "/reportes" },
+    { label: "Usuarios", icon: "people", route: "/usuarios", adminOnly: true },
   ];
 
   visibleMenuItems = computed(() =>
-    this.menuItems.filter((item) => !item.adminOnly || this.isAdmin())
+    this.menuItems.filter((item) => !item.adminOnly || this.isAdmin()),
   );
 
   constructor() {
@@ -74,8 +78,10 @@ export class MainLayoutComponent {
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
         const navEvent = event as NavigationEnd;
-        const item = this.menuItems.find((i) => navEvent.urlAfterRedirects.startsWith(i.route));
-        this.currentTitle.set(item?.label || 'Dashboard');
+        const item = this.menuItems.find((i) =>
+          navEvent.urlAfterRedirects.startsWith(i.route),
+        );
+        this.currentTitle.set(item?.label || "Dashboard");
         if (this.isHandset()) {
           this.sidenavOpened.set(false);
         }
@@ -99,13 +105,13 @@ export class MainLayoutComponent {
 
   getInitials(): string {
     const user = this.currentUser();
-    if (!user) return '?';
+    if (!user) return "?";
     return `${user.nombre.charAt(0)}${user.apellido.charAt(0)}`.toUpperCase();
   }
 
   getFullName(): string {
     const user = this.currentUser();
-    if (!user) return '';
+    if (!user) return "";
     return `${user.nombre} ${user.apellido}`;
   }
 }
