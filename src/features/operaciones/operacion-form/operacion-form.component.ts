@@ -84,7 +84,7 @@ export class OperacionFormComponent implements OnInit {
   }
 
   loadEntidades(): void {
-    this._saldoService.listar().subscribe({
+    this._saldoService.listar({ page: 0, size: 10 }).subscribe({
       next: (response) => {
         this.entidades.set(response.data.content);
       },

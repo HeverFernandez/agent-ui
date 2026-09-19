@@ -64,7 +64,6 @@ export class EntidadListComponent implements OnInit {
   private _alertService = inject(AlertService);
   private dialogService = inject(DialogService);
 
-  loading = signal(true);
   dataSource = new MatTableDataSource<EntidadFinanciera>([]);
   displayedColumns: string[] = [
     "codigoEntidad",
@@ -112,18 +111,15 @@ export class EntidadListComponent implements OnInit {
         next: (response: ApiResponse<PageResponse<EntidadFinanciera>>) => {
           this.dataSource.data = response.data.content;
           this.totalElements = response.data.totalElements;
-          // this.loading.set(false);
         },
         error: () => {
-          this.loading.set(false);
+          this._alertService.getAlert(
+            "Alerta",
+            "Error en cargar entidades",
+            "warning",
+          );
         },
       });
-  }
-
-  applyFilter(event: Event): void {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.searchText.set(filterValue);
-    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   onPageChange(event: PageEvent): void {

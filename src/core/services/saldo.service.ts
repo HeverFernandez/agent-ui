@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResponse, PageResponse, Saldo, EstadoSaldo } from '../models/models';
+import { OptionsRequest } from "../models";
 
 @Injectable({
   providedIn: "root",
@@ -10,14 +11,24 @@ export class SaldoService {
   constructor(private http: HttpClient) {}
 
   listar(
-    page: number = 0,
-    size: number = 10,
-    sort: string = "idSaldo,asc",
+    options: OptionsRequest,
   ): Observable<ApiResponse<PageResponse<Saldo>>> {
-    const params = new HttpParams()
-      .set("page", page.toString())
-      .set("size", size.toString())
-      .set("sort", sort);
+    const {
+      page = 0,
+      size = 10,
+      sortBy = "",
+      estado = "",
+      direction = "ASC",
+      entidad = "",
+    } = options;
+    const params: any = {
+      page,
+      size,
+      direction: direction.toUpperCase() || "ASC",
+    };
+    if (sortBy) params.sortBy = sortBy;
+    if (estado && estado !== "All") params.estado = estado;
+    if (entidad && entidad !== "") params.entidad = entidad;
     return this.http.get<ApiResponse<PageResponse<Saldo>>>("/saldos", {
       params,
     });

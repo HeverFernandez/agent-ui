@@ -65,7 +65,9 @@ export class DashboardComponent implements OnInit {
       entidades: this.entidadService
         .listar({ page: 0, size: 100 })
         .pipe(catchError(() => of(null))),
-      saldos: this.saldoService.listar(0, 100).pipe(catchError(() => of(null))),
+      saldos: this.saldoService
+        .listar({ page: 0, size: 100 })
+        .pipe(catchError(() => of(null))),
       operaciones: this.operacionService
         .listar(0, 5)
         .pipe(catchError(() => of(null))),

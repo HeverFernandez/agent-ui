@@ -99,7 +99,7 @@ export class ReporteComponent implements OnInit {
         .listar(0, 1000)
         .pipe(catchError(() => of(null))),
       saldos: this.saldoService
-        .listar(0, 1000)
+        .listar({ page: 0, size: 1000 })
         .pipe(catchError(() => of(null))),
     }).subscribe({
       next: ({ operaciones, saldos }) => {

@@ -1,10 +1,14 @@
+import { TipoEntidad } from "./models";
+
 export interface OptionsRequest {
   page?:          number; //0
   size?:          number; //5 cantidad de registros por pagina
   sortBy?:        string; //fechaCreacion
   tipo?:          string; //fechaCreacion
   direction?:     'DESC' | 'ASC'; //DESC
-  searchTerm?:     string
+  searchTerm?:     string;
+  entidad?:       string;
+  estado?:        TipoEntidad | string;
 }
 
 export interface DataPaginationResponse {

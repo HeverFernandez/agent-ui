@@ -1,17 +1,30 @@
-import { Component, inject, signal, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { MatTableModule, MatTableDataSource } from '@angular/material/table';
-import { MatPaginatorModule, MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatSortModule, MatSort } from '@angular/material/sort';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatCardModule } from '@angular/material/card';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import {
+  Component,
+  inject,
+  signal,
+  OnInit,
+  ViewChild,
+  ChangeDetectionStrategy,
+  linkedSignal,
+  effect,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Router } from "@angular/router";
+import { MatTableModule, MatTableDataSource } from "@angular/material/table";
+import {
+  MatPaginatorModule,
+  MatPaginator,
+  PageEvent,
+} from "@angular/material/paginator";
+import { MatSortModule, MatSort, Sort } from "@angular/material/sort";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatSelectModule } from "@angular/material/select";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatCardModule } from "@angular/material/card";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { SaldoService } from "../../../core/services/saldo.service";
 import { DialogService } from "../../../shared/services/dialog.service";
 import {
@@ -51,7 +64,6 @@ export class SaldoListComponent implements OnInit {
   private _alertService = inject(AlertService);
   private dialogService = inject(DialogService);
 
-  loading = signal(true);
   dataSource = new MatTableDataSource<Saldo>([]);
   displayedColumns: string[] = [
     "idSaldo",
@@ -68,7 +80,11 @@ export class SaldoListComponent implements OnInit {
   pageIndex = 0;
   pageSizeOptions: number[] = [5, 10, 25, 50];
   filtroEstado = signal<EstadoSaldo | "">("");
-
+  sortBy = signal("");
+  direction = signal<"ASC" | "DESC">("ASC");
+  initialValue = signal<string>("");
+  valueSearch = signal<string>("");
+  inputValue = linkedSignal<string>(() => this.initialValue() ?? "");
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -77,22 +93,28 @@ export class SaldoListComponent implements OnInit {
   }
 
   loadSaldos(): void {
-    this.loading.set(true);
-    this.saldoService.listar(this.pageIndex, this.pageSize).subscribe({
-      next: (response: ApiResponse<PageResponse<Saldo>>) => {
-        this.dataSource.data = response.data.content;
-        this.totalElements = response.data.totalElements;
-        this.loading.set(false);
-      },
-      error: () => {
-        this.loading.set(false);
-      },
-    });
-  }
-
-  applyFilter(event: Event): void {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    this.saldoService
+      .listar({
+        page: this.pageIndex,
+        size: this.pageSize,
+        sortBy: this.sortBy(),
+        direction: this.direction(),
+        estado: this.filtroEstado(),
+        entidad: this.valueSearch(),
+      })
+      .subscribe({
+        next: (response: ApiResponse<PageResponse<Saldo>>) => {
+          this.dataSource.data = response.data.content;
+          this.totalElements = response.data.totalElements;
+        },
+        error: () => {
+          this._alertService.getAlert(
+            "Alerta",
+            "Error en cargar saldos",
+            "warning",
+          );
+        },
+      });
   }
 
   onPageChange(event: PageEvent): void {
@@ -134,23 +156,7 @@ export class SaldoListComponent implements OnInit {
 
   filtrarPorEstado(estado: EstadoSaldo | ""): void {
     this.filtroEstado.set(estado);
-    if (estado === "") {
-      this.loadSaldos();
-    } else {
-      this.loading.set(true);
-      this.saldoService
-        .listarPorEstado(estado as EstadoSaldo, this.pageIndex, this.pageSize)
-        .subscribe({
-          next: (response: ApiResponse<PageResponse<Saldo>>) => {
-            this.dataSource.data = response.data.content;
-            this.totalElements = response.data.totalElements;
-            this.loading.set(false);
-          },
-          error: () => {
-            this.loading.set(false);
-          },
-        });
-    }
+    this.loadSaldos();
   }
 
   formatCurrency(value: number): string {
@@ -174,5 +180,29 @@ export class SaldoListComponent implements OnInit {
     if (saldo.montoDisponible <= 0) return "saldo-agotado";
     if (saldo.montoDisponible < saldo.montoInicial * 0.2) return "saldo-bajo";
     return "saldo-ok";
+  }
+
+  debounceEffect = effect((onCleanup) => {
+    const value = this.inputValue();
+    const timeout = setTimeout(() => {
+      this.valueSearch.set(value);
+      this.loadSaldos();
+    }, 500);
+    onCleanup(() => {
+      clearTimeout(timeout);
+    });
+  });
+
+  sortData(sort: Sort) {
+    console.log(sort);
+    this.sortBy.set("entidadFinanciera");
+    this.direction.set(sort.direction as any);
+    if (sort.direction === "") {
+      this.sortBy.set("");
+    }
+    this.loadSaldos();
+    if (!sort.active || sort.direction === "") {
+      return;
+    }
   }
 }
