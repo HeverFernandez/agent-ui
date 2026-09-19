@@ -36,7 +36,7 @@ export interface EntidadFinanciera {
   id: number | null;
 }
 
-export type EstadoSaldo = "ACTIVO" | "BLOQUEADO" | "CERRADO" | "ANULADO";
+export type EstadoSaldo = "ACTIVO" | "BLOQUEADO" | "AGOTADO" | "ANULADO";
 
 export interface Saldo {
   idEntidad: number;
