@@ -69,7 +69,7 @@ export class DashboardComponent implements OnInit {
         .listar({ page: 0, size: 100 })
         .pipe(catchError(() => of(null))),
       operaciones: this.operacionService
-        .listar(0, 5)
+        .listar({ page: 0, size: 5 })
         .pipe(catchError(() => of(null))),
     }).subscribe({
       next: ({ entidades, saldos, operaciones }) => {

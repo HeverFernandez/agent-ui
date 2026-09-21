@@ -96,7 +96,7 @@ export class ReporteComponent implements OnInit {
     this.loading.set(true);
     forkJoin({
       operaciones: this.operacionService
-        .listar(0, 1000)
+        .listar({ page: 0, size: 1000 })
         .pipe(catchError(() => of(null))),
       saldos: this.saldoService
         .listar({ page: 0, size: 1000 })

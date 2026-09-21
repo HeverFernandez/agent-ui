@@ -9,6 +9,10 @@ export interface OptionsRequest {
   searchTerm?:     string;
   entidad?:       string;
   estado?:        TipoEntidad | string;
+  finicio?:       string;
+  ffin?:          string;
+  tipoOperacion?: string;
+  estadoOperacion?:string;
 }
 
 export interface DataPaginationResponse {

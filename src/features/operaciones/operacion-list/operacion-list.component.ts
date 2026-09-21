@@ -1,19 +1,31 @@
-import { Component, inject, signal, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { MatTableModule, MatTableDataSource } from '@angular/material/table';
-import { MatPaginatorModule, MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatSortModule, MatSort } from '@angular/material/sort';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatCardModule } from '@angular/material/card';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import {
+  Component,
+  inject,
+  signal,
+  OnInit,
+  ViewChild,
+  ChangeDetectionStrategy,
+  linkedSignal,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Router } from "@angular/router";
+import { MatTableModule, MatTableDataSource } from "@angular/material/table";
+import {
+  MatPaginatorModule,
+  MatPaginator,
+  PageEvent,
+} from "@angular/material/paginator";
+import { MatSortModule, MatSort } from "@angular/material/sort";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatSelectModule } from "@angular/material/select";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatCardModule } from "@angular/material/card";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatDatepickerModule } from "@angular/material/datepicker";
+import { MatNativeDateModule } from "@angular/material/core";
 import { OperacionService } from "../../../core/services/operacion.service";
 import { DialogService } from "../../../shared/services/dialog.service";
 import {
@@ -57,7 +69,6 @@ export class OperacionListComponent implements OnInit {
   private _alertService = inject(AlertService);
   private dialogService = inject(DialogService);
 
-  loading = signal(true);
   dataSource = new MatTableDataSource<Operacion>([]);
   displayedColumns: string[] = [
     "idOperacion",
@@ -75,11 +86,17 @@ export class OperacionListComponent implements OnInit {
   pageIndex = 0;
   pageSizeOptions: number[] = [5, 10, 25, 50];
 
+  sortBy = signal("");
+  direction = signal<"ASC" | "DESC">("ASC");
+  searchText = signal("");
   filtroTipo = signal<TipoOperacion | "">("");
   filtroEstado = signal<EstadoOperacion | "">("");
   filtroEntidad = signal<number | "">("");
   fechaInicio = signal("");
   fechaFin = signal("");
+  initialValue = signal<string>("");
+  valueSearch = signal<string>("");
+  inputValue = linkedSignal<string>(() => this.initialValue() ?? "");
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -89,17 +106,31 @@ export class OperacionListComponent implements OnInit {
   }
 
   loadOperaciones(): void {
-    this.loading.set(true);
-    this.operacionService.listar(this.pageIndex, this.pageSize).subscribe({
-      next: (response: ApiResponse<PageResponse<Operacion>>) => {
-        this.dataSource.data = response.data.content;
-        this.totalElements = response.data.totalElements;
-        this.loading.set(false);
-      },
-      error: () => {
-        this.loading.set(false);
-      },
-    });
+    this.operacionService
+      .listar({
+        page: this.pageIndex,
+        size: this.pageSize,
+        tipoOperacion: this.filtroTipo(),
+        searchTerm: this.valueSearch(),
+        sortBy: this.sortBy(),
+        direction: this.direction(),
+        finicio: this.fechaInicio(),
+        ffin: this.fechaFin(),
+        estadoOperacion: this.filtroEstado(),
+      })
+      .subscribe({
+        next: (response: ApiResponse<PageResponse<Operacion>>) => {
+          this.dataSource.data = response.data.content;
+          this.totalElements = response.data.totalElements;
+        },
+        error: () => {
+          this._alertService.getAlert(
+            "Alerta",
+            "Error en cargar operaciones",
+            "warning",
+          );
+        },
+      });
   }
 
   buscar(): void {
@@ -114,7 +145,6 @@ export class OperacionListComponent implements OnInit {
       return;
     }
 
-    this.loading.set(true);
     const filtro: FiltroOperacion = {
       tipoOperacion: this.filtroTipo() || null,
       estadoOperacion: this.filtroEstado() || null,
@@ -128,10 +158,13 @@ export class OperacionListComponent implements OnInit {
         next: (response) => {
           this.dataSource.data = response.content;
           this.totalElements = response.totalElements;
-          this.loading.set(false);
         },
         error: () => {
-          this.loading.set(false);
+          this._alertService.getAlert(
+            "Alerta",
+            "Error en cargar operaciones",
+            "warning",
+          );
         },
       });
   }
@@ -197,11 +230,13 @@ export class OperacionListComponent implements OnInit {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
     });
   }
 
+  senDateFormat(date: any) {
+    if (!date) return "";
+    return `${String(date.getDate()).padStart(2, "0")}-${String(date.getMonth() + 1).padStart(2, "0")}-${date.getFullYear()}`;
+  }
   getTipoLabel(tipo: TipoOperacion): string {
     const labels: Record<TipoOperacion, string> = {
       RETIRO: "Retiro",
@@ -209,5 +244,24 @@ export class OperacionListComponent implements OnInit {
       PAGO_SERVICIO: "Pago",
     };
     return labels[tipo] || tipo;
+  }
+
+  filtrarPorTipo(tipo: TipoOperacion): void {
+    this.filtroTipo.set(tipo);
+    this.loadOperaciones();
+  }
+  filtrarPorEstado(tipo: EstadoOperacion): void {
+    this.filtroEstado.set(tipo);
+    this.loadOperaciones();
+  }
+  filtrarPorFechainicio(date: string) {
+    this.fechaInicio.set(this.senDateFormat(date));
+    this.loadOperaciones();
+  }
+  filtrarPorFechaFin(date: string) {
+    console.log("Fin=", date);
+
+    this.fechaFin.set(this.senDateFormat(date));
+    this.loadOperaciones();
   }
 }
