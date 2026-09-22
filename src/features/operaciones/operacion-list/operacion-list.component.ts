@@ -5,7 +5,6 @@ import {
   OnInit,
   ViewChild,
   ChangeDetectionStrategy,
-  linkedSignal,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
@@ -32,12 +31,13 @@ import {
   Operacion,
   TipoOperacion,
   EstadoOperacion,
-  FiltroOperacion,
   PageResponse,
   ApiResponse,
+  EntidadFinanciera,
 } from "../../../core/models/models";
 import { LoadingSpinnerComponent } from "../../../shared/components/loading-spinner/loading-spinner.component";
 import { AlertService } from "../../../shared/services/alert.service";
+import { EntidadService } from "src/core/services";
 
 @Component({
   selector: "app-operacion-list",
@@ -68,6 +68,7 @@ export class OperacionListComponent implements OnInit {
   private router = inject(Router);
   private _alertService = inject(AlertService);
   private dialogService = inject(DialogService);
+  private entidadService = inject(EntidadService);
 
   dataSource = new MatTableDataSource<Operacion>([]);
   displayedColumns: string[] = [
@@ -88,21 +89,20 @@ export class OperacionListComponent implements OnInit {
 
   sortBy = signal("");
   direction = signal<"ASC" | "DESC">("ASC");
-  searchText = signal("");
   filtroTipo = signal<TipoOperacion | "">("");
   filtroEstado = signal<EstadoOperacion | "">("");
-  filtroEntidad = signal<number | "">("");
   fechaInicio = signal("");
   fechaFin = signal("");
-  initialValue = signal<string>("");
-  valueSearch = signal<string>("");
-  inputValue = linkedSignal<string>(() => this.initialValue() ?? "");
+
+  entidadFiltro = signal("");
+  entidades = signal<EntidadFinanciera[]>([]);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   ngOnInit(): void {
     this.loadOperaciones();
+    this.loadEntidades();
   }
 
   loadOperaciones(): void {
@@ -111,12 +111,12 @@ export class OperacionListComponent implements OnInit {
         page: this.pageIndex,
         size: this.pageSize,
         tipoOperacion: this.filtroTipo(),
-        searchTerm: this.valueSearch(),
         sortBy: this.sortBy(),
         direction: this.direction(),
         finicio: this.fechaInicio(),
         ffin: this.fechaFin(),
         estadoOperacion: this.filtroEstado(),
+        entidad: this.entidadFiltro(),
       })
       .subscribe({
         next: (response: ApiResponse<PageResponse<Operacion>>) => {
@@ -132,47 +132,18 @@ export class OperacionListComponent implements OnInit {
         },
       });
   }
-
-  buscar(): void {
-    const tieneFiltros =
-      this.filtroTipo() ||
-      this.filtroEstado() ||
-      this.filtroEntidad() ||
-      this.fechaInicio() ||
-      this.fechaFin();
-    if (!tieneFiltros) {
-      this.loadOperaciones();
-      return;
-    }
-
-    const filtro: FiltroOperacion = {
-      tipoOperacion: this.filtroTipo() || null,
-      estadoOperacion: this.filtroEstado() || null,
-      idEntidad: this.filtroEntidad() ? +this.filtroEntidad() : null,
-      fechaInicio: this.fechaInicio() || null,
-      fechaFin: this.fechaFin() || null,
-    };
-    this.operacionService
-      .buscar(filtro, this.pageIndex, this.pageSize)
-      .subscribe({
-        next: (response) => {
-          this.dataSource.data = response.content;
-          this.totalElements = response.totalElements;
-        },
-        error: () => {
-          this._alertService.getAlert(
-            "Alerta",
-            "Error en cargar operaciones",
-            "warning",
-          );
-        },
-      });
+  loadEntidades(): void {
+    this.entidadService.listarActivas().subscribe({
+      next: (response) => {
+        this.entidades.set(response.data);
+      },
+    });
   }
 
   limpiarFiltros(): void {
     this.filtroTipo.set("");
     this.filtroEstado.set("");
-    this.filtroEntidad.set("");
+    this.entidadFiltro.set("");
     this.fechaInicio.set("");
     this.fechaFin.set("");
     this.pageIndex = 0;
@@ -182,7 +153,7 @@ export class OperacionListComponent implements OnInit {
   onPageChange(event: PageEvent): void {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
-    this.buscar();
+    this.loadOperaciones();
   }
 
   crear(): void {
@@ -209,7 +180,7 @@ export class OperacionListComponent implements OnInit {
                 "",
                 "success",
               );
-              this.buscar();
+              this.loadOperaciones();
             },
           });
         }
@@ -235,7 +206,7 @@ export class OperacionListComponent implements OnInit {
 
   senDateFormat(date: any) {
     if (!date) return "";
-    return `${String(date.getDate()).padStart(2, "0")}-${String(date.getMonth() + 1).padStart(2, "0")}-${date.getFullYear()}`;
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
   }
   getTipoLabel(tipo: TipoOperacion): string {
     const labels: Record<TipoOperacion, string> = {
@@ -254,14 +225,22 @@ export class OperacionListComponent implements OnInit {
     this.filtroEstado.set(tipo);
     this.loadOperaciones();
   }
-  filtrarPorFechainicio(date: string) {
-    this.fechaInicio.set(this.senDateFormat(date));
+  filtrarPorFechainicio(inicioDate: string) {
+    this.fechaInicio.set(this.senDateFormat(inicioDate) + "T00:00:00");
+    console.log(this.fechaInicio);
     this.loadOperaciones();
   }
-  filtrarPorFechaFin(date: string) {
-    console.log("Fin=", date);
+  filtrarPorFechaFin(finDate: string) {
+    let date =
+      finDate ||
+      `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}-${String(new Date().getDate()).padStart(2, "0")}`;
+    this.fechaFin.set(this.senDateFormat(date) + "T23:59:59");
+    console.log(this.fechaFin);
+    this.loadOperaciones();
+  }
 
-    this.fechaFin.set(this.senDateFormat(date));
+  filtarPorEntidad(value: any) {
+    this.entidadFiltro.set(value);
     this.loadOperaciones();
   }
 }

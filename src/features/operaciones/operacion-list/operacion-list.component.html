@@ -75,11 +75,13 @@
         <mat-date-range-input [rangePicker]="picker">
           <input
             matStartDate
+            [value]="fechaInicio()"
             (dateInput)="filtrarPorFechainicio($any($event.target).value)"
             placeholder="Start date"
           />
           <input
             matEndDate
+            [value]="fechaFin()"
             (dateInput)="filtrarPorFechaFin($any($event.target).value)"
             placeholder="End date"
           />
@@ -91,8 +93,24 @@
         <mat-date-range-picker #picker></mat-date-range-picker>
       </mat-form-field>
 
+      <mat-form-field appearance="fill" class="tipo-field">
+        <mat-label>Entidad</mat-label>
+        <mat-icon matPrefix>account_balance</mat-icon>
+        <mat-select
+          [value]="entidadFiltro()"
+          (selectionChange)="filtarPorEntidad($event.value)"
+        >
+          <mat-option value="">Todas</mat-option>
+          @for (entidad of entidades(); track entidad.id) {
+            <mat-option [value]="entidad.id">{{
+              entidad.denominacion
+            }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
       <div class="filter-actions">
-        <button (click)="buscar()" class="btn bg-primary text-white">
+        <button (click)="loadOperaciones()" class="btn bg-primary text-white">
           <mat-icon>search</mat-icon>
           Buscar
         </button>
