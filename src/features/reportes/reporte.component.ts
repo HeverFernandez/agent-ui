@@ -71,12 +71,12 @@ export class ReporteComponent implements OnInit {
   chartOperacionesPorEstado = signal<ChartData[]>([]);
 
   displayedColumns: string[] = [
-    "idOperacion",
-    "tipoOperacion",
+    "id",
+    "tipo",
     "entidad",
-    "montoOperacion",
-    "estadoOperacion",
-    "fechaOperacion",
+    "monto",
+    "estado",
+    "fecha",
   ];
 
   ngOnInit(): void {
@@ -110,12 +110,12 @@ export class ReporteComponent implements OnInit {
           ops = operaciones.data.content;
           if (this.fechaInicio() && this.fechaFin()) {
             ops = ops.filter((o) => {
-              const fecha = o.fechaOperacion?.split("T")[0] || "";
+              const fecha = o.fecha?.split("T")[0] || "";
               return fecha >= this.fechaInicio() && fecha <= this.fechaFin();
             });
           }
           if (this.entidadFiltro()) {
-            ops = ops.filter((o) => o.idEntidad === +this.entidadFiltro());
+            ops = ops.filter((o) => o.id === +this.entidadFiltro());
           }
         }
 
@@ -144,14 +144,14 @@ export class ReporteComponent implements OnInit {
 
     ops.forEach((op) => {
       const tipoLabel =
-        op.tipoOperacion === "PAGO_SERVICIO"
+        op.tipo === "PAGO_SERVICIO"
           ? "Pago"
-          : op.tipoOperacion.charAt(0) +
-            op.tipoOperacion.slice(1).toLowerCase();
+          : op.tipo.charAt(0) + op.tipo.slice(1).toLowerCase();
       porTipo[tipoLabel] = (porTipo[tipoLabel] || 0) + 1;
-      porEstado[op.estadoOperacion] = (porEstado[op.estadoOperacion] || 0) + 1;
-      const entidadNombre = op.entidadDenominacion!;
-      montosPorEntidad[entidadNombre] = (montosPorEntidad[entidadNombre] || 0) + op.montoOperacion;
+      porEstado[op.estado] = (porEstado[op.estado] || 0) + 1;
+      const entidadNombre = op.entidad!;
+      montosPorEntidad[entidadNombre] =
+        (montosPorEntidad[entidadNombre] || 0) + op.monto;
     });
 
     this.chartOperacionesPorTipo.set(
@@ -203,12 +203,12 @@ export class ReporteComponent implements OnInit {
     ];
     const body = this.operaciones().map((op) => [
       op.id?.toString() || "",
-      op.tipoOperacion,
-      op.entidadFinanciera?.denominacion || `Entidad #${op.idEntidad}`,
-      `S/ ${op.montoOperacion.toFixed(2)}`,
+      op.tipo,
+      op.entidad || `Entidad #${op.id}`,
+      `S/ ${op.monto.toFixed(2)}`,
       op.numeroReferencia,
-      op.estadoOperacion,
-      this.formatDate(op.fechaOperacion),
+      op.estado,
+      this.formatDate(op.fecha),
     ]);
 
     autoTable(doc, {
@@ -230,15 +230,15 @@ export class ReporteComponent implements OnInit {
 
     const data = this.operaciones().map((op) => ({
       ID: op.id,
-      Tipo: op.tipoOperacion,
-      Entidad: op.entidadDenominacion,
-      Monto: op.montoOperacion,
+      Tipo: op.tipo,
+      Entidad: op.entidad,
+      Monto: op.monto,
       Referencia: op.numeroReferencia,
-      Descripción: op.descripcionOperacion,
-      Estado: op.estadoOperacion,
-      "Servicio Pagado": op.servicioPagado,
-      Usuario: op.usuarioRegistro,
-      Fecha: this.formatDate(op.fechaOperacion),
+      Descripción: op.descripcion,
+      Estado: op.estado,
+      "Servicio Pagado": "...",
+      Usuario: "...",
+      Fecha: this.formatDate(op.fecha),
     }));
 
     const ws = XLSX.utils.json_to_sheet(data);
@@ -277,6 +277,6 @@ export class ReporteComponent implements OnInit {
   }
 
   getTotalMonto(): number {
-    return this.operaciones().reduce((sum, op) => sum + op.montoOperacion, 0);
+    return this.operaciones().reduce((sum, op) => sum + op.monto, 0);
   }
 }

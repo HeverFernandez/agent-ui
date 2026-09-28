@@ -97,7 +97,7 @@ export class SaldoFormComponent implements OnInit {
     this.saldoService.obtenerPorId(id).subscribe({
       next: (response) => {
         const saldo = response.data;
-        this.isFinancialEntityId.set(saldo.entidadFinancieraId);
+        this.isFinancialEntityId.set(saldo.idEntidad);
         this.form.patchValue({
           entidadFinancieraId: saldo.idEntidad,
           montoInicial: saldo.montoInicial,

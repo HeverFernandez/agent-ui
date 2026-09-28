@@ -27,7 +27,7 @@
             <mat-label>Tipo de Operación</mat-label>
             <mat-icon matPrefix>swap_horiz</mat-icon>
             <mat-select
-              formControlName="tipoOperacion"
+              formControlName="tipo"
               (selectionChange)="onTipoChange()"
             >
               <mat-option value="RETIRO">Retiro</mat-option>
@@ -39,16 +39,16 @@
           <mat-form-field appearance="fill" class="tipo-field">
             <mat-label>Entidad Financiera</mat-label>
             <mat-icon matPrefix>account_balance</mat-icon>
-            <mat-select formControlName="idEntidadFinanciera">
-              @for (entidad of entidades(); track entidad.id) {
-                <mat-option [value]="entidad.entidadFinancieraId">{{
-                  entidad.entidadDenominacion
+            <mat-select formControlName="idEntidadBanco">
+              @for (saldo of entidades(); track saldo.idEntidad) {
+                <mat-option [value]="saldo.idEntidad">{{
+                  saldo.entidad
                 }}</mat-option>
               }
             </mat-select>
             @if (
-              form.get("idEntidadFinanciera")?.hasError("required") &&
-              form.get("idEntidadFinanciera")?.touched
+              form.get("idEntidadBanco")?.hasError("required") &&
+              form.get("idEntidadBanco")?.touched
             ) {
               <mat-error>Seleccione una entidad</mat-error>
             }
@@ -62,19 +62,19 @@
             <input
               matInput
               type="number"
-              formControlName="montoOperacion"
+              formControlName="monto"
               step="0.01"
               min="0.01"
             />
             @if (
-              form.get("montoOperacion")?.hasError("required") &&
-              form.get("montoOperacion")?.touched
+              form.get("monto")?.hasError("required") &&
+              form.get("monto")?.touched
             ) {
               <mat-error>El monto es obligatorio</mat-error>
             }
             @if (
-              form.get("montoOperacion")?.hasError("min") &&
-              form.get("montoOperacion")?.touched
+              form.get("monto")?.hasError("min") &&
+              form.get("monto")?.touched
             ) {
               <mat-error>Debe ser mayor a 0</mat-error>
             }
@@ -96,16 +96,27 @@
           </mat-form-field>
         </div>
 
-        @if (form.get("tipoOperacion")?.value === "PAGO_SERVICIO") {
-          <mat-form-field appearance="fill" class="full-width">
-            <mat-label>Servicio Pagado</mat-label>
-            <mat-icon matPrefix>receipt_long</mat-icon>
-            <input
-              matInput
-              formControlName="servicioPagado"
-              placeholder="Ej: Agua, Luz, Internet..."
-            />
+        @if (form.get("tipo")?.value === "PAGO_SERVICIO") {
+          <div class="form-row">
+            <mat-form-field appearance="fill" class="tipo-field">
+            <mat-label>Seleccione Servicio</mat-label>
+            <!-- TODO: cambiar icono -->
+            <mat-icon matPrefix>room_service</mat-icon>          
+            <mat-select formControlName="idEntidadServicio">
+              @for (entidad of servicios(); track entidad.id) {
+                <mat-option [value]="entidad.id">{{
+                  entidad.denominacion
+                }}</mat-option>
+              }
+            </mat-select>
+            @if (
+              form.get("idEntidadServicio")?.hasError("required") &&
+              form.get("idEntidadServicio")?.touched
+            ) {
+              <mat-error>Seleccione un servicio</mat-error>
+            }
           </mat-form-field>
+          </div>
         }
           <mat-form-field appearance="fill" class="full-width">
             <mat-label>Comisión</mat-label>
@@ -125,13 +136,13 @@
           <mat-icon matPrefix>notes</mat-icon>
           <textarea
             matInput
-            formControlName="descripcionOperacion"
+            formControlName="descripcion"
             rows="3"
             placeholder="Descripción de la operación..."
           ></textarea>
           @if (
-            form.get("descripcionOperacion")?.hasError("required") &&
-            form.get("descripcionOperacion")?.touched
+            form.get("descripcion")?.hasError("required") &&
+            form.get("descripcion")?.touched
           ) {
             <mat-error>La descripción es obligatoria</mat-error>
           }

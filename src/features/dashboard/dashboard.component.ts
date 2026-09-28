@@ -95,8 +95,7 @@ export class DashboardComponent implements OnInit {
 
           const today = new Date().toISOString().split("T")[0];
           const opsHoy = operaciones.data.content.filter(
-            (o: Operacion) =>
-              o.fechaOperacion && o.fechaOperacion.startsWith(today),
+            (o: Operacion) => o.fecha && o.fecha.startsWith(today),
           );
           this.operacionesHoy.set(opsHoy.length);
         }

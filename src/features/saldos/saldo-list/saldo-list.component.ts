@@ -134,7 +134,7 @@ export class SaldoListComponent implements OnInit {
     this.dialogService
       .confirmar(
         "Eliminar Saldo",
-        `¿Está seguro de eliminar el saldo de ${saldo.entidadDenominacion}?`,
+        `¿Está seguro de eliminar el saldo de ${saldo.entidad}?`,
         "Eliminar",
         "Cancelar",
       )
@@ -160,6 +160,7 @@ export class SaldoListComponent implements OnInit {
   }
 
   formatCurrency(value: number): string {
+    if (!value) return "-";
     return new Intl.NumberFormat("es-ES", {
       style: "currency",
       currency: "PEN",

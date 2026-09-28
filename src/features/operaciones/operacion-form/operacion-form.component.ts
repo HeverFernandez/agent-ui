@@ -17,10 +17,15 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { OperacionService } from "../../../core/services/operacion.service";
 import { AuthService } from "../../../core/services/auth.service";
-import { Saldo, TipoOperacion } from "../../../core/models/models";
+import {
+  EntidadFinanciera,
+  Saldo,
+  TipoOperacion,
+} from "../../../core/models/models";
 import { LoadingSpinnerComponent } from "../../../shared/components/loading-spinner/loading-spinner.component";
 import { AlertService } from "../../../shared/services/alert.service";
 import { SaldoService } from "src/core/services/saldo.service";
+import { EntidadService } from "src/core/services";
 
 @Component({
   selector: "app-operacion-form",
@@ -45,6 +50,8 @@ export class OperacionFormComponent implements OnInit {
   private fb = inject(FormBuilder);
   private operacionService = inject(OperacionService);
   private _saldoService = inject(SaldoService);
+  private _entidadService = inject(EntidadService);
+
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private _alertService = inject(AlertService);
@@ -55,20 +62,22 @@ export class OperacionFormComponent implements OnInit {
   isEdit = signal(false);
   operacionId: number | null = null;
   entidades = signal<Saldo[] | null>(null);
+  servicios = signal<EntidadFinanciera[] | null>(null);
 
   form = this.fb.group({
-    idEntidadFinanciera: [null as number | null, [Validators.required]],
-    tipoOperacion: ["RETIRO", [Validators.required]],
-    montoOperacion: [0, [Validators.required, Validators.min(0.01)]],
-    descripcionOperacion: [""],
-    numeroReferencia: ["", [Validators.required]],
+    tipo: ["RETIRO", [Validators.required]],
+    idEntidadBanco: [null as number | null, [Validators.required]],
+    monto: ["", [Validators.required, Validators.min(0.01)]],
+    descripcion: [""],
+    numeroReferencia: [""],
     usuarioId: ["", [Validators.required]],
-    servicioPagado: [""],
+    idEntidadServicio: [""],
     comision: [""],
   });
 
   ngOnInit(): void {
     this.loadEntidades();
+    this.loadServices();
     const user = this.authService.currentUser();
     if (user) {
       this.form.patchValue({
@@ -84,11 +93,20 @@ export class OperacionFormComponent implements OnInit {
   }
 
   loadEntidades(): void {
-    this._saldoService.listar({ page: 0, size: 10 }).subscribe({
+    this._saldoService.listar({ page: 0, size: 1000 }).subscribe({
       next: (response) => {
         this.entidades.set(response.data.content);
       },
     });
+  }
+  loadServices(): void {
+    this._entidadService
+      .listar({ page: 0, size: 1000, tipo: "SERVICIO" })
+      .subscribe({
+        next: (response) => {
+          this.servicios.set(response.data.content);
+        },
+      });
   }
 
   loadOperacion(id: number): void {
@@ -97,11 +115,12 @@ export class OperacionFormComponent implements OnInit {
       next: (response) => {
         const op = response.data;
         this.form.patchValue({
-          idEntidadFinanciera: op.id,
-          tipoOperacion: op.tipoOperacion,
-          montoOperacion: op.montoOperacion,
-          descripcionOperacion: op.descripcionOperacion,
+          idEntidadBanco: op.id,
+          tipo: op.tipo,
+          monto: op.monto.toString(),
+          descripcion: op.descripcion,
           numeroReferencia: op.numeroReferencia,
+          comision: op.comision,
         });
         this.loading.set(false);
       },
@@ -112,10 +131,18 @@ export class OperacionFormComponent implements OnInit {
   }
 
   onTipoChange(): void {
-    const tipo = this.form.get("tipoOperacion")?.value;
+    const tipo = this.form.get("tipo")?.value;
     if (tipo !== "PAGO_SERVICIO") {
-      this.form.patchValue({ servicioPagado: "" });
+      this.form.patchValue({ idEntidadServicio: "" });
+      this.form.controls["idEntidadServicio"].removeValidators(
+        Validators.required,
+      );
+    } else {
+      this.form.controls["idEntidadServicio"].addValidators(
+        Validators.required,
+      );
     }
+    this.form.controls["idEntidadServicio"].updateValueAndValidity();
   }
 
   save(): void {
@@ -126,16 +153,17 @@ export class OperacionFormComponent implements OnInit {
     this.saving.set(true);
     let operacion: any = {
       id: this.operacionId,
-      idEntidadFinanciera: this.form.value.idEntidadFinanciera!,
-      tipoOperacion: this.form.value.tipoOperacion as TipoOperacion,
-      montoOperacion: this.form.value.montoOperacion!,
-      descripcionOperacion: this.form.value.descripcionOperacion!,
+      idEntidadBanco: this.form.value.idEntidadBanco!,
+      tipo: this.form.value.tipo as TipoOperacion,
+      monto: +this.form.value.monto!,
+      descripcion: this.form.value.descripcion!,
       numeroReferencia: this.form.value.numeroReferencia!,
       usuarioId: +this.form.value.usuarioId!,
-      servicioPagado: this.form.value.servicioPagado || "",
+      idEntidadServicio: this.form.value.idEntidadServicio || "",
+      comision: +this.form.value.comision!,
     };
-    if (operacion.tipoOperacion !== "PAGO_SERVICIO") {
-      delete operacion.servicioPagado;
+    if (operacion.tipo !== "PAGO_SERVICIO") {
+      delete operacion.idEntidadServicio;
     }
     if (this.isEdit() && this.operacionId) {
       this.operacionService.actualizar(this.operacionId, operacion).subscribe({
@@ -154,8 +182,6 @@ export class OperacionFormComponent implements OnInit {
       });
     } else {
       delete operacion.id;
-
-      console.log(operacion);
       this.operacionService.crear(operacion).subscribe({
         next: () => {
           this.saving.set(false);

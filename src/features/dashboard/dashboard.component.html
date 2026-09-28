@@ -54,17 +54,17 @@
                 @for (op of recentOperaciones(); track op.id) {
                   <tr>
                     <td>
-                      <span class="tipo-badge tipo-{{ op.tipoOperacion.toLowerCase() }}">
-                        {{ op.tipoOperacion === 'PAGO_SERVICIO' ? 'PAGO' : op.tipoOperacion }}
+                      <span class="tipo-badge tipo-{{ op.tipo.toLowerCase() }}">
+                        {{ op.tipo === 'PAGO_SERVICIO' ? 'PAGO' : op.tipo }}
                       </span>
                     </td>
-                    <td class="monto">{{ formatCurrency(op.montoOperacion) }}</td>
+                    <td class="monto">{{ formatCurrency(op.monto) }}</td>
                     <td>
-                      <span class="estado-badge estado-{{ op.estadoOperacion.toLowerCase() }}">
-                        {{ op.estadoOperacion }}
+                      <span class="estado-badge estado-{{ op.estado.toLowerCase() }}">
+                        {{ op.estado }}
                       </span>
                     </td>
-                    <td>{{ formatDate(op.fechaOperacion) }}</td>
+                    <td>{{ formatDate(op.fecha) }}</td>
                   </tr>
                 }
               </tbody>
@@ -103,8 +103,8 @@
                 @for (saldo of topSaldos(); track saldo.id) {
                   <tr>
                     <td>
-                      <span class="tipo-badge tipo-{{ saldo.entidadFinancieraId }}">
-                        {{ saldo.entidadDenominacion }}
+                      <span class="tipo-badge">
+                        {{ saldo.entidad }}
                       </span>
                     </td>
                     <td class="monto">{{ formatCurrency(saldo.montoDisponible) }}</td>

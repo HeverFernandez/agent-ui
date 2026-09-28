@@ -72,13 +72,14 @@ export class OperacionListComponent implements OnInit {
 
   dataSource = new MatTableDataSource<Operacion>([]);
   displayedColumns: string[] = [
-    "idOperacion",
-    "tipoOperacion",
+    "id",
+    "tipo",
     "entidad",
-    "montoOperacion",
+    "monto",
     "numeroReferencia",
-    "estadoOperacion",
-    "fechaOperacion",
+    "comision",
+    "estado",
+    "fecha",
     "acciones",
   ];
 
@@ -188,6 +189,7 @@ export class OperacionListComponent implements OnInit {
   }
 
   formatCurrency(value: number): string {
+    if (!value) return "-";
     return new Intl.NumberFormat("es-ES", {
       style: "currency",
       currency: "PEN",
@@ -212,7 +214,7 @@ export class OperacionListComponent implements OnInit {
     const labels: Record<TipoOperacion, string> = {
       RETIRO: "Retiro",
       DEPOSITO: "Depósito",
-      PAGO_SERVICIO: "Pago",
+      PAGO_SERVICIO: "Servicio",
     };
     return labels[tipo] || tipo;
   }

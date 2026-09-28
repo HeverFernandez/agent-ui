@@ -163,7 +163,7 @@ router-outlet + * {
   background: #fff3e0;
   color: #e65100;
 }
-.estado-completado {
+.estado-completada {
   background: #e8f5e9;
   color: #2e7d32;
 }

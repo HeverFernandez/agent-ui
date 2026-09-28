@@ -22,8 +22,8 @@ export interface PageResponse<T> {
   empty: boolean;
 }
 
-export type TipoEntidad = 'BANCO' | 'SERVICIO';
-export type EstadoEntidad = 'ACTIVO' | 'INACTIVO';
+export type TipoEntidad = "BANCO" | "SERVICIO";
+export type EstadoEntidad = "ACTIVO" | "INACTIVO";
 
 export interface EntidadFinanciera {
   idEntidad: number | null;
@@ -39,18 +39,16 @@ export interface EntidadFinanciera {
 export type EstadoSaldo = "ACTIVO" | "BLOQUEADO" | "AGOTADO" | "ANULADO";
 
 export interface Saldo {
-  idEntidad: number;
-  entidadFinanciera?: EntidadFinanciera;
-  entidadDenominacion?: string;
-  entidadFinancieraId: number;
+  createdAt: string | null;
+  entidad: string;
+  estado: EstadoSaldo;
+  fechaAsignacion: string;
+  updatedAt: string;
   montoInicial: number;
   montoDisponible: number;
-  fechaAsignacion: string;
-  fechaVencimiento: string | null;
-  usuarioAsignador: string;
-  observaciones: string;
-  estadoSaldo: EstadoSaldo;
+  idEntidad: number;
   id: number;
+  usuarioAsignador: string;
 }
 
 export type TipoOperacion = "RETIRO" | "DEPOSITO" | "PAGO_SERVICIO";
@@ -62,21 +60,22 @@ export type EstadoOperacion =
 
 export interface Operacion {
   id: number | null;
-  idEntidad: number;
-  entidadFinanciera?: EntidadFinanciera;
-  entidadDenominacion?: string;
-  tipoOperacion: string;
-  montoOperacion: number;
-  descripcionOperacion: string;
-  fechaOperacion: string;
+  tipo: string;
+  monto: number;
+  descripcion: string;
   numeroReferencia: string;
-  usuarioRegistro: string;
-  estadoOperacion: EstadoOperacion;
-  servicioPagado: string;
+  fecha: string;
+  entidad: string;
+  estado: string;
+  createdAt: string;
+  updatedAt: string;
+  // para crear o editar
+  comision: string;
+  idEntidadServicio: string;
 }
 
-export type RolUsuario = 'ADMINISTRADOR' | 'AGENTE';
-export type EstadoUsuario = 'ACTIVO' | 'INACTIVO';
+export type RolUsuario = "ADMINISTRADOR" | "AGENTE";
+export type EstadoUsuario = "ACTIVO" | "INACTIVO";
 
 export interface Usuario {
   idUsuario: number | null;
@@ -99,7 +98,7 @@ export interface AuthResponse {
   usuario: Usuario;
 }
 
-export type TipoReporte = 'OPERACIONES' | 'SALDOS' | 'USUARIOS' | 'ENTIDADES';
+export type TipoReporte = "OPERACIONES" | "SALDOS" | "USUARIOS" | "ENTIDADES";
 
 export interface Reporte {
   idReporte: number | null;
