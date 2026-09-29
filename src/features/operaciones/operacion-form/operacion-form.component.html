@@ -35,24 +35,39 @@
               <mat-option value="PAGO_SERVICIO">Pago de Servicio</mat-option>
             </mat-select>
           </mat-form-field>
-
-          <mat-form-field appearance="fill" class="tipo-field">
-            <mat-label>Entidad Financiera</mat-label>
-            <mat-icon matPrefix>account_balance</mat-icon>
-            <mat-select formControlName="idEntidadBanco">
-              @for (saldo of entidades(); track saldo.idEntidad) {
-                <mat-option [value]="saldo.idEntidad">{{
-                  saldo.entidad
-                }}</mat-option>
-              }
-            </mat-select>
-            @if (
-              form.get("idEntidadBanco")?.hasError("required") &&
-              form.get("idEntidadBanco")?.touched
-            ) {
-              <mat-error>Seleccione una entidad</mat-error>
-            }
-          </mat-form-field>
+          <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Entidad Financiera</mat-label>
+          <mat-icon matPrefix>account_balance</mat-icon>
+          <input
+            matInput
+            readonly
+            [value]="
+              entidadSeleccionada()
+                ? entidadSeleccionada()!.entidad +
+                  ' (' +
+                  entidadSeleccionada()!.montoDisponible +
+                  ')'
+                : ''
+            "
+            placeholder="Seleccione una entidad"
+            (click)="seleccionarEntidad()"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            aria-label="Seleccionar entidad"
+            (click)="seleccionarEntidad()"
+          >
+            <mat-icon>search</mat-icon>
+          </button>
+          @if (
+            form.get("entidadFinancieraId")?.hasError("required") &&
+            form.get("entidadFinancieraId")?.touched
+          ) {
+            <mat-error>Seleccione una entidad</mat-error>
+          }
+        </mat-form-field>
         </div>
 
         <div class="form-row">

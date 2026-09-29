@@ -13,11 +13,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { SaldoService } from '../../../core/services/saldo.service';
 import { EntidadService } from "../../../core/services/entidad.service";
 import { AuthService } from "../../../core/services/auth.service";
-import {
-  Saldo,
-  EntidadFinanciera,
-  EstadoSaldo,
-} from "../../../core/models/models";
+import { EntidadFinanciera } from "../../../core/models/models";
 import { LoadingSpinnerComponent } from "../../../shared/components/loading-spinner/loading-spinner.component";
 import { EntidadSelectorDialogComponent } from "../../../shared/components/entidad-selector-dialog/entidad-selector-dialog.component";
 import { AlertService } from "../../../shared/services/alert.service";
@@ -116,7 +112,10 @@ export class SaldoFormComponent implements OnInit {
     const dialogRef = this.dialog.open(EntidadSelectorDialogComponent, {
       width: "520px",
       maxWidth: "calc(100vw - 32px)",
-      data: { entidades: this.entidades() },
+      data: {
+        entidades: this.entidades(),
+        entidadSelect: this.entidadSeleccionada(),
+      },
     });
 
     dialogRef.afterClosed().subscribe((entidad: any | undefined) => {

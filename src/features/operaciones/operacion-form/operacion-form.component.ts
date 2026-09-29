@@ -26,6 +26,8 @@ import { LoadingSpinnerComponent } from "../../../shared/components/loading-spin
 import { AlertService } from "../../../shared/services/alert.service";
 import { SaldoService } from "src/core/services/saldo.service";
 import { EntidadService } from "src/core/services";
+import { MatDialog } from "@angular/material/dialog";
+import { SaldoSelectorDialogComponent } from "src/shared/components/saldo-selector-dialog/saldo-selector-dialog.component";
 
 @Component({
   selector: "app-operacion-form",
@@ -61,8 +63,11 @@ export class OperacionFormComponent implements OnInit {
   saving = signal(false);
   isEdit = signal(false);
   operacionId: number | null = null;
-  entidades = signal<Saldo[] | null>(null);
+  saldos = signal<Saldo[] | null>(null);
   servicios = signal<EntidadFinanciera[] | null>(null);
+
+  entidadSeleccionada = signal<Saldo | null>(null);
+  private dialog = inject(MatDialog);
 
   form = this.fb.group({
     tipo: ["RETIRO", [Validators.required]],
@@ -76,7 +81,6 @@ export class OperacionFormComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.loadEntidades();
     this.loadServices();
     const user = this.authService.currentUser();
     if (user) {
@@ -92,13 +96,6 @@ export class OperacionFormComponent implements OnInit {
     }
   }
 
-  loadEntidades(): void {
-    this._saldoService.listar({ page: 0, size: 1000 }).subscribe({
-      next: (response) => {
-        this.entidades.set(response.data.content);
-      },
-    });
-  }
   loadServices(): void {
     this._entidadService
       .listar({ page: 0, size: 1000, tipo: "SERVICIO" })
@@ -122,6 +119,7 @@ export class OperacionFormComponent implements OnInit {
           numeroReferencia: op.numeroReferencia,
           comision: op.comision,
         });
+        this.actualizarEntidadSeleccionada(op.idEntidadBanco);
         this.loading.set(false);
       },
       error: () => {
@@ -199,6 +197,36 @@ export class OperacionFormComponent implements OnInit {
     }
   }
 
+  seleccionarEntidad(): void {
+    const dialogRef = this.dialog.open(SaldoSelectorDialogComponent, {
+      width: "520px",
+      maxWidth: "calc(100vw - 32px)",
+      data: { entidades: [] },
+    });
+    dialogRef.afterClosed().subscribe((entidad: any | undefined) => {
+      console.log("Entidad seleccionada:", entidad);
+      if (entidad) {
+        this.form.patchValue({ idEntidadBanco: entidad.id });
+        this.entidadSeleccionada.set(entidad);
+        this.form.get("idEntidadBanco")?.markAsTouched();
+      }
+    });
+  }
+
+  private actualizarEntidadSeleccionada(id: number): void {
+    this._saldoService.obtenerPorId(id).subscribe({
+      next: (response) => {
+        this.entidadSeleccionada.set(response.data);
+        this.form.patchValue({
+          idEntidadBanco: this.entidadSeleccionada()!.id,
+        });
+        this.form.get("idEntidadBanco")?.markAsTouched();
+      },
+      error: () => {
+        console.log("error");
+      },
+    });
+  }
   cancel(): void {
     this.router.navigate(["/operaciones"]);
   }

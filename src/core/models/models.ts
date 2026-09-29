@@ -69,9 +69,11 @@ export interface Operacion {
   estado: string;
   createdAt: string;
   updatedAt: string;
+  servicio: string;
   // para crear o editar
   comision: string;
   idEntidadServicio: string;
+  idEntidadBanco: number;
 }
 
 export type RolUsuario = "ADMINISTRADOR" | "AGENTE";
