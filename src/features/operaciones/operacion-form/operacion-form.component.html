@@ -35,6 +35,7 @@
               <mat-option value="PAGO_SERVICIO">Pago de Servicio</mat-option>
             </mat-select>
           </mat-form-field>
+          
           <mat-form-field appearance="fill" class="full-width">
           <mat-label>Entidad Financiera</mat-label>
           <mat-icon matPrefix>account_balance</mat-icon>
@@ -111,27 +112,41 @@
           </mat-form-field>
         </div>
 
-        @if (form.get("tipo")?.value === "PAGO_SERVICIO") {
-          <div class="form-row">
-            <mat-form-field appearance="fill" class="tipo-field">
+        @if (form.get("tipo")?.value === "PAGO_SERVICIO") {          
+          <mat-form-field appearance="fill" class="full-width">
             <mat-label>Seleccione Servicio</mat-label>
-            <!-- TODO: cambiar icono -->
             <mat-icon matPrefix>room_service</mat-icon>          
-            <mat-select formControlName="idEntidadServicio">
-              @for (entidad of servicios(); track entidad.id) {
-                <mat-option [value]="entidad.id">{{
-                  entidad.denominacion
-                }}</mat-option>
-              }
-            </mat-select>
-            @if (
-              form.get("idEntidadServicio")?.hasError("required") &&
-              form.get("idEntidadServicio")?.touched
-            ) {
-              <mat-error>Seleccione un servicio</mat-error>
-            }
-          </mat-form-field>
-          </div>
+          <input
+            matInput
+            readonly
+            [value]="
+              servicioSeleccionada()
+                ? servicioSeleccionada()!.codigoEntidad +
+                  ' (' +
+                  servicioSeleccionada()!.denominacion +
+                  ')'
+                : ''
+            "
+            placeholder="Seleccione un servicio"
+            (click)="seleccionarServicio()"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            aria-label="Seleccionar servicio"
+            (click)="seleccionarServicio()"
+          >
+            <mat-icon>search</mat-icon>
+          </button>
+          @if (
+            form.get("entidadFinancieraId")?.hasError("required") &&
+            form.get("entidadFinancieraId")?.touched
+          ) {
+            <mat-error>Seleccione una entidad</mat-error>
+          }
+        </mat-form-field>
+
         }
           <mat-form-field appearance="fill" class="full-width">
             <mat-label>Comisión</mat-label>

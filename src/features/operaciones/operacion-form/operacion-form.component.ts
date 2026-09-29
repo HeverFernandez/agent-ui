@@ -28,6 +28,7 @@ import { SaldoService } from "src/core/services/saldo.service";
 import { EntidadService } from "src/core/services";
 import { MatDialog } from "@angular/material/dialog";
 import { SaldoSelectorDialogComponent } from "src/shared/components/saldo-selector-dialog/saldo-selector-dialog.component";
+import { EntidadSelectorDialogComponent } from "src/shared/components/entidad-selector-dialog/entidad-selector-dialog.component";
 
 @Component({
   selector: "app-operacion-form",
@@ -67,6 +68,7 @@ export class OperacionFormComponent implements OnInit {
   servicios = signal<EntidadFinanciera[] | null>(null);
 
   entidadSeleccionada = signal<Saldo | null>(null);
+  servicioSeleccionada = signal<EntidadFinanciera | null>(null);
   private dialog = inject(MatDialog);
 
   form = this.fb.group({
@@ -120,6 +122,9 @@ export class OperacionFormComponent implements OnInit {
           comision: op.comision,
         });
         this.actualizarEntidadSeleccionada(op.idEntidadBanco);
+        if (op.tipo === "PAGO_SERVICIO") {
+          this.actualizarServicioSeleccionada(+op.idEntidadServicio);
+        }
         this.loading.set(false);
       },
       error: () => {
@@ -212,6 +217,21 @@ export class OperacionFormComponent implements OnInit {
       }
     });
   }
+  seleccionarServicio(): void {
+    const dialogRef = this.dialog.open(EntidadSelectorDialogComponent, {
+      width: "520px",
+      maxWidth: "calc(100vw - 32px)",
+      data: { entidades: this.servicios() },
+    });
+    dialogRef.afterClosed().subscribe((entidad: any | undefined) => {
+      console.log("Entidad seleccionada:", entidad);
+      if (entidad) {
+        this.form.patchValue({ idEntidadServicio: entidad.id });
+        this.entidadSeleccionada.set(entidad);
+        this.form.get("idEntidadServicio")?.markAsTouched();
+      }
+    });
+  }
 
   private actualizarEntidadSeleccionada(id: number): void {
     this._saldoService.obtenerPorId(id).subscribe({
@@ -227,6 +247,21 @@ export class OperacionFormComponent implements OnInit {
       },
     });
   }
+  private actualizarServicioSeleccionada(id: number): void {
+    this._entidadService.obtenerPorId(id).subscribe({
+      next: (response) => {
+        this.servicioSeleccionada.set(response.data);
+        this.form.patchValue({
+          idEntidadServicio: this.servicioSeleccionada()!.id?.toString(),
+        });
+        this.form.get("idEntidadServicio")?.markAsTouched();
+      },
+      error: () => {
+        console.log("error");
+      },
+    });
+  }
+
   cancel(): void {
     this.router.navigate(["/operaciones"]);
   }

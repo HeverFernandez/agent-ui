@@ -76,6 +76,7 @@ export class OperacionListComponent implements OnInit {
     "tipo",
     "entidad",
     "monto",
+    "servicio",
     "numeroReferencia",
     "comision",
     "estado",
