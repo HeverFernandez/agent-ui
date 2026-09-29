@@ -317,12 +317,6 @@ mat-error {
 .mat-mdc-paginator-page-size-label {
   display: none;
 }
-mat-paginator .mat-mdc-select-trigger {
-  padding: 0px 10px!important;
-}
-mat-datepicker-content{
-  background-color: var(--color-gris-claro)!important;
-}
 td button mat-icon:hover {
   color: color-mix(in srgb, var(--color-primario) 60%, transparent)!important;
 
