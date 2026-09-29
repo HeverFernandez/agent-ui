@@ -35,6 +35,7 @@ import {
 } from "../../../core/models/models";
 import { LoadingSpinnerComponent } from "../../../shared/components/loading-spinner/loading-spinner.component";
 import { AlertService } from "../../../shared/services/alert.service";
+import { asyncScheduler, finalize, observeOn } from "rxjs";
 
 @Component({
   selector: "app-saldo-list",
@@ -85,6 +86,7 @@ export class SaldoListComponent implements OnInit {
   initialValue = signal<string>("");
   valueSearch = signal<string>("");
   inputValue = linkedSignal<string>(() => this.initialValue() ?? "");
+  loading = signal(true);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -93,6 +95,7 @@ export class SaldoListComponent implements OnInit {
   }
 
   loadSaldos(): void {
+    this.loading.set(true);
     this.saldoService
       .listar({
         page: this.pageIndex,
@@ -102,6 +105,10 @@ export class SaldoListComponent implements OnInit {
         estado: this.filtroEstado(),
         entidad: this.valueSearch(),
       })
+      .pipe(
+        observeOn(asyncScheduler),
+        finalize(() => this.loading.set(false)),
+      )
       .subscribe({
         next: (response: ApiResponse<PageResponse<Saldo>>) => {
           this.dataSource.data = response.data.content;
@@ -186,8 +193,10 @@ export class SaldoListComponent implements OnInit {
   debounceEffect = effect((onCleanup) => {
     const value = this.inputValue();
     const timeout = setTimeout(() => {
-      this.valueSearch.set(value);
-      this.loadSaldos();
+      if (value.length === 0 || value.length > 2) {
+        this.valueSearch.set(value);
+        this.loadSaldos();
+      }
     }, 500);
     onCleanup(() => {
       clearTimeout(timeout);

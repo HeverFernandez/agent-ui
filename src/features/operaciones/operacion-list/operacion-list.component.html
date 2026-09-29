@@ -122,7 +122,7 @@
     </div>
   </mat-card>
 
-  @if (!dataSource.data) {
+  @if (loading()) {
     <app-loading-spinner />
   } @else {
     <mat-card class="table-card">
@@ -136,10 +136,9 @@
           <ng-container matColumnDef="tipo">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo</th>
             <td mat-cell *matCellDef="let op">
-              <span
-                class="tipo-badge tipo-{{ op.tipo?.toLowerCase() }}"
-                >{{ getTipoLabel(op.tipo) }}</span
-              >
+              <span class="tipo-badge tipo-{{ op.tipo?.toLowerCase() }}">{{
+                getTipoLabel(op.tipo)
+              }}</span>
             </td>
           </ng-container>
 
@@ -157,7 +156,7 @@
           <ng-container matColumnDef="servicio">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Servicio</th>
             <td mat-cell *matCellDef="let op">
-              {{ op.servicio ?? '-'}}
+              {{ op.servicio ?? "-" }}
             </td>
           </ng-container>
 
@@ -167,18 +166,17 @@
           </ng-container>
           <ng-container matColumnDef="comision">
             <th mat-header-cell *matHeaderCellDef>Comisión</th>
-            <td mat-cell *matCellDef="let op" class="monto">{{ formatCurrency(op.comision) }}</td>
+            <td mat-cell *matCellDef="let op" class="monto">
+              {{ formatCurrency(op.comision) }}
+            </td>
           </ng-container>
 
           <ng-container matColumnDef="estado">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Estado</th>
             <td mat-cell *matCellDef="let op">
-              <span
-                class="estado-badge estado-{{
-                  op.estado.toLowerCase()
-                }}"
-                >{{ op.estado }}</span
-              >
+              <span class="estado-badge estado-{{ op.estado.toLowerCase() }}">{{
+                op.estado
+              }}</span>
             </td>
           </ng-container>
 
@@ -206,7 +204,7 @@
         </table>
       </div>
 
-      @if (dataSource.data.length === 0) {
+      @if (dataSource.data && dataSource.data.length < 1) {
         <div class="empty-state">
           <mat-icon>swap_horiz</mat-icon>
           <p>No hay operaciones registradas</p>
@@ -215,14 +213,15 @@
           </button>
         </div>
       }
-
-      <mat-paginator
-        [length]="totalElements"
-        [pageSize]="pageSize"
-        [pageIndex]="pageIndex"
-        [pageSizeOptions]="pageSizeOptions"
-        (page)="onPageChange($event)"
-      ></mat-paginator>
+      @if (dataSource.data.length > 0) {
+        <mat-paginator
+          [length]="totalElements"
+          [pageSize]="pageSize"
+          [pageIndex]="pageIndex"
+          [pageSizeOptions]="pageSizeOptions"
+          (page)="onPageChange($event)"
+        ></mat-paginator>
+      }
     </mat-card>
   }
 </div>

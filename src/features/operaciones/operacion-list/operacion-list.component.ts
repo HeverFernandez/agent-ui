@@ -38,6 +38,7 @@ import {
 import { LoadingSpinnerComponent } from "../../../shared/components/loading-spinner/loading-spinner.component";
 import { AlertService } from "../../../shared/services/alert.service";
 import { EntidadService } from "src/core/services";
+import { asyncScheduler, finalize, observeOn } from "rxjs";
 
 @Component({
   selector: "app-operacion-list",
@@ -98,6 +99,7 @@ export class OperacionListComponent implements OnInit {
 
   entidadFiltro = signal("");
   entidades = signal<EntidadFinanciera[]>([]);
+  loading = signal(true);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -108,6 +110,7 @@ export class OperacionListComponent implements OnInit {
   }
 
   loadOperaciones(): void {
+    this.loading.set(true);
     this.operacionService
       .listar({
         page: this.pageIndex,
@@ -120,6 +123,10 @@ export class OperacionListComponent implements OnInit {
         estadoOperacion: this.filtroEstado(),
         entidad: this.entidadFiltro(),
       })
+      .pipe(
+        observeOn(asyncScheduler),
+        finalize(() => this.loading.set(false)),
+      )
       .subscribe({
         next: (response: ApiResponse<PageResponse<Operacion>>) => {
           this.dataSource.data = response.data.content;
@@ -207,10 +214,6 @@ export class OperacionListComponent implements OnInit {
     });
   }
 
-  senDateFormat(date: any) {
-    if (!date) return "";
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-  }
   getTipoLabel(tipo: TipoOperacion): string {
     const labels: Record<TipoOperacion, string> = {
       RETIRO: "Retiro",
@@ -228,18 +231,15 @@ export class OperacionListComponent implements OnInit {
     this.filtroEstado.set(tipo);
     this.loadOperaciones();
   }
-  filtrarPorFechainicio(inicioDate: string) {
-    this.fechaInicio.set(this.senDateFormat(inicioDate) + "T00:00:00");
-    console.log(this.fechaInicio);
-    this.loadOperaciones();
+  filtrarPorFechainicio(inicioDate: Date) {
+    this.fechaInicio.set(inicioDate.toISOString().split("T")[0] + "T00:00:00");
   }
-  filtrarPorFechaFin(finDate: string) {
-    let date =
-      finDate ||
-      `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}-${String(new Date().getDate()).padStart(2, "0")}`;
-    this.fechaFin.set(this.senDateFormat(date) + "T23:59:59");
-    console.log(this.fechaFin);
-    this.loadOperaciones();
+  filtrarPorFechaFin(finDate: Date) {
+    if (finDate) {
+      console.log(finDate);
+      this.fechaFin.set(finDate.toISOString().split("T")[0] + "T23:59:59");
+      this.loadOperaciones();
+    }
   }
 
   filtarPorEntidad(value: any) {

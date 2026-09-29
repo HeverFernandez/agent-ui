@@ -77,8 +77,10 @@ export class SaldoSelectorDialogComponent {
   debounceEffect = effect((onCleanup) => {
     const value = this.inputValue();
     const timeout = setTimeout(() => {
-      this.valueSearch.set(value);
-      this.entidadesFiltradas();
+      if (value.length === 0 || value.length > 2) {
+        this.valueSearch.set(value);
+        this.entidadesFiltradas();
+      }
     }, 500);
     onCleanup(() => {
       clearTimeout(timeout);
