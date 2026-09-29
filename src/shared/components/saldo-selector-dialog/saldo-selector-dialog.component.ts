@@ -43,7 +43,15 @@ export class SaldoSelectorDialogComponent {
   valueSearch = signal<string>("");
   inputValue = linkedSignal<string>(() => this.initialValue() ?? "");
 
-  constructor(private dialogRef: MatDialogRef<SaldoSelectorDialogComponent>) {}
+  constructor(
+    private dialogRef: MatDialogRef<SaldoSelectorDialogComponent>,
+    @Inject(MAT_DIALOG_DATA)
+    public data: {
+      saldoSelect: string;
+    },
+  ) {
+    this.initialValue.set(this.data.saldoSelect);
+  }
 
   entidadesFiltradas() {
     this._saldoService
@@ -78,6 +86,7 @@ export class SaldoSelectorDialogComponent {
   });
 
   cleanData() {
+    this.initialValue.set("");
     this.valueSearch.set("");
   }
 }

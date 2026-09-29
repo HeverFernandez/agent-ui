@@ -206,7 +206,7 @@ export class OperacionFormComponent implements OnInit {
     const dialogRef = this.dialog.open(SaldoSelectorDialogComponent, {
       width: "520px",
       maxWidth: "calc(100vw - 32px)",
-      data: { entidades: [] },
+      data: { entidades: [], saldoSelect:  this.entidadSeleccionada()?.entidad},
     });
     dialogRef.afterClosed().subscribe((entidad: any | undefined) => {
       console.log("Entidad seleccionada:", entidad);
@@ -221,13 +221,16 @@ export class OperacionFormComponent implements OnInit {
     const dialogRef = this.dialog.open(EntidadSelectorDialogComponent, {
       width: "520px",
       maxWidth: "calc(100vw - 32px)",
-      data: { entidades: this.servicios() },
+      data: {
+        entidades: this.servicios(),
+        entidadSelect: this.servicioSeleccionada(),
+      },
     });
     dialogRef.afterClosed().subscribe((entidad: any | undefined) => {
       console.log("Entidad seleccionada:", entidad);
       if (entidad) {
         this.form.patchValue({ idEntidadServicio: entidad.id });
-        this.entidadSeleccionada.set(entidad);
+        this.servicioSeleccionada.set(entidad);
         this.form.get("idEntidadServicio")?.markAsTouched();
       }
     });
