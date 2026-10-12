@@ -211,7 +211,7 @@ export class OperacionFormComponent implements OnInit {
     dialogRef.afterClosed().subscribe((entidad: any | undefined) => {
       console.log("Entidad seleccionada:", entidad);
       if (entidad) {
-        this.form.patchValue({ idEntidadBanco: entidad.id });
+        this.form.patchValue({ idEntidadBanco: entidad.idEntidad });
         this.entidadSeleccionada.set(entidad);
         this.form.get("idEntidadBanco")?.markAsTouched();
       }

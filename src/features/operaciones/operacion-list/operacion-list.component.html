@@ -38,38 +38,6 @@
           <mat-option value="FALLIDA">Fallida</mat-option>
         </mat-select>
       </mat-form-field>
-
-      <!-- <mat-form-field appearance="fill" class="tipo-field">
-        <mat-label>Desde</mat-label>
-        <input
-          matInput
-          [matDatepicker]="inicioPicker"
-          [value]="fechaInicio()"
-          (dateInput)="filtrarPorFechainicio($any($event.target).value)"
-          class="date-input"
-        />
-        <mat-datepicker-toggle
-          matSuffix
-          [for]="inicioPicker"
-        ></mat-datepicker-toggle>
-        <mat-datepicker #inicioPicker></mat-datepicker>
-      </mat-form-field>
-
-      <mat-form-field appearance="fill" class="tipo-field">
-        <mat-label>Hasta</mat-label>
-        <input
-          matInput
-          [matDatepicker]="finPicker"
-          [value]="fechaFin()"
-          (dateInput)="filtrarPorFechaFin($any($event.target).value)"
-        />
-        <mat-datepicker-toggle
-          matSuffix
-          [for]="finPicker"
-        ></mat-datepicker-toggle>
-        <mat-datepicker #finPicker></mat-datepicker>
-      </mat-form-field> -->
-
       <mat-form-field>
         <mat-label>Rango de Fecha</mat-label>
         <mat-date-range-input [rangePicker]="picker">
