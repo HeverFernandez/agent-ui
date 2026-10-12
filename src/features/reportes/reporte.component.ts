@@ -1,22 +1,34 @@
-import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { OperacionService } from '../../core/services/operacion.service';
-import { EntidadService } from '../../core/services/entidad.service';
+import {
+  Component,
+  inject,
+  signal,
+  OnInit,
+  ChangeDetectionStrategy,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { MatCardModule } from "@angular/material/card";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatSelectModule } from "@angular/material/select";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatDatepickerModule } from "@angular/material/datepicker";
+import { MatNativeDateModule } from "@angular/material/core";
+import { MatTableModule } from "@angular/material/table";
+import { MatPaginatorModule } from "@angular/material/paginator";
+import { NgxChartsModule } from "@swimlane/ngx-charts";
+import { OperacionService } from "../../core/services/operacion.service";
+import { EntidadService } from "../../core/services/entidad.service";
 import { SaldoService } from "../../core/services/saldo.service";
 import { LoadingSpinnerComponent } from "../../shared/components/loading-spinner/loading-spinner.component";
-import { Operacion, EntidadFinanciera, Saldo } from "../../core/models/models";
+import {
+  Operacion,
+  EntidadFinanciera,
+  Saldo,
+  TipoOperacion,
+  EstadoOperacion,
+} from "../../core/models/models";
 import { forkJoin, catchError, of } from "rxjs";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
@@ -57,15 +69,18 @@ export class ReporteComponent implements OnInit {
   private saldoService = inject(SaldoService);
   private _alertService = inject(AlertService);
 
+  sortBy = signal("");
+  direction = signal<"ASC" | "DESC">("ASC");
+  filtroTipo = signal<TipoOperacion | "">("");
+  filtroEstado = signal<EstadoOperacion | "">("");
+  fechaInicio = signal("");
+  fechaFin = signal("");
+  entidadFiltro = signal("");
+
   loading = signal(false);
   entidades = signal<EntidadFinanciera[]>([]);
   operaciones = signal<Operacion[]>([]);
-  saldos = signal<Saldo[]>([]);
-
-  fechaInicio = signal("");
-  fechaFin = signal("");
-  entidadFiltro = signal<number | "">("");
-
+  totalComision = signal<number>(0);
   chartOperacionesPorTipo = signal<ChartData[]>([]);
   chartMontosPorEntidad = signal<ChartData[]>([]);
   chartOperacionesPorEstado = signal<ChartData[]>([]);
@@ -94,47 +109,47 @@ export class ReporteComponent implements OnInit {
 
   loadDatos(): void {
     this.loading.set(true);
-    forkJoin({
-      operaciones: this.operacionService
-        .listar({ page: 0, size: 1000 })
-        .pipe(catchError(() => of(null))),
-      saldos: this.saldoService
-        .listar({ page: 0, size: 1000 })
-        .pipe(catchError(() => of(null))),
-    }).subscribe({
-      next: ({ operaciones, saldos }) => {
-        let ops: Operacion[] = [];
-        let sld: Saldo[] = [];
 
-        if (operaciones) {
-          ops = operaciones.data.content;
-          if (this.fechaInicio() && this.fechaFin()) {
-            ops = ops.filter((o) => {
-              const fecha = o.fecha?.split("T")[0] || "";
-              return fecha >= this.fechaInicio() && fecha <= this.fechaFin();
-            });
-          }
-          if (this.entidadFiltro()) {
-            ops = ops.filter((o) => o.id === +this.entidadFiltro());
-          }
-        }
+    operaciones: this.operacionService
+      .listar({
+        page: 0,
+        size: 1000,
+        tipoOperacion: this.filtroTipo(),
+        sortBy: this.sortBy(),
+        direction: this.direction(),
+        finicio: this.fechaInicio(),
+        ffin: this.fechaFin(),
+        estadoOperacion: this.filtroEstado(),
+        entidad: this.entidadFiltro(),
+      })
+      .subscribe({
+        next: (operaciones) => {
+          let ops: Operacion[] = [];
+          let sld: Saldo[] = [];
 
-        if (saldos) {
-          sld = saldos.data.content;
-          if (this.entidadFiltro()) {
-            sld = sld.filter((s) => s.idEntidad === +this.entidadFiltro());
+          if (operaciones) {
+            ops = operaciones.data.content;
+            if (this.fechaInicio() && this.fechaFin()) {
+              ops = ops.filter((o) => {
+                const fecha = o.fecha?.split("T")[0] || "";
+                return fecha >= this.fechaInicio() && fecha <= this.fechaFin();
+              });
+            }
+            if (this.entidadFiltro()) {
+              ops = ops.filter((o) => o.id === +this.entidadFiltro());
+            }
           }
-        }
-
-        this.operaciones.set(ops);
-        this.saldos.set(sld);
-        this.buildCharts(ops);
-        this.loading.set(false);
-      },
-      error: () => {
-        this.loading.set(false);
-      },
-    });
+          this.totalComision.set(
+            ops.reduce((acc, op) => acc + parseFloat(op.comision || "0"), 0),
+          );
+          this.operaciones.set(ops);
+          this.buildCharts(ops);
+          this.loading.set(false);
+        },
+        error: () => {
+          this.loading.set(false);
+        },
+      });
   }
 
   buildCharts(ops: Operacion[]): void {
@@ -173,9 +188,11 @@ export class ReporteComponent implements OnInit {
   }
 
   limpiarFiltros(): void {
+    this.filtroTipo.set("");
+    this.filtroEstado.set("");
+    this.entidadFiltro.set("");
     this.fechaInicio.set("");
     this.fechaFin.set("");
-    this.entidadFiltro.set("");
     this.loadDatos();
   }
 
@@ -278,5 +295,29 @@ export class ReporteComponent implements OnInit {
 
   getTotalMonto(): number {
     return this.operaciones().reduce((sum, op) => sum + op.monto, 0);
+  }
+
+  filtrarPorTipo(tipo: TipoOperacion): void {
+    this.filtroTipo.set(tipo);
+    this.loadDatos();
+  }
+  filtrarPorEstado(tipo: EstadoOperacion): void {
+    this.filtroEstado.set(tipo);
+    this.loadDatos();
+  }
+  filtrarPorFechainicio(inicioDate: Date) {
+    this.fechaInicio.set(inicioDate.toISOString().split("T")[0] + "T00:00:00");
+  }
+  filtrarPorFechaFin(finDate: Date) {
+    if (finDate) {
+      console.log(finDate);
+      this.fechaFin.set(finDate.toISOString().split("T")[0] + "T23:59:59");
+      this.loadDatos();
+    }
+  }
+
+  filtarPorEntidad(value: any) {
+    this.entidadFiltro.set(value);
+    this.loadDatos();
   }
 }

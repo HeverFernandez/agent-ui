@@ -19,34 +19,74 @@
   <mat-card class="filter-card">
     <div class="filters">
       <mat-form-field appearance="fill" class="tipo-field">
-        <mat-label>Entidad</mat-label>
-        <mat-icon matPrefix>account_balance</mat-icon>
-        <mat-select [value]="entidadFiltro()" (selectionChange)="entidadFiltro.set($event.value)">
-          <mat-option value="">Todas</mat-option>
-          @for (entidad of entidades(); track entidad.id) {
-            <mat-option [value]="entidad.id">{{ entidad.denominacion }}</mat-option>
-          }
+        <mat-label>Tipo</mat-label>
+        <mat-select
+          [value]="filtroTipo()"
+          (selectionChange)="filtrarPorTipo($event.value)"
+        >
+          <mat-option value="">Todos</mat-option>
+          <mat-option value="RETIRO">Retiro</mat-option>
+          <mat-option value="DEPOSITO">Depósito</mat-option>
+          <mat-option value="PAGO_SERVICIO">Pago de Servicio</mat-option>
         </mat-select>
       </mat-form-field>
 
       <mat-form-field appearance="fill" class="tipo-field">
-        <mat-label>Desde</mat-label>        
-        <input matInput [matDatepicker]="inicioPicker" [value]="fechaInicio()" (dateInput)="fechaInicio.set($any($event.target).value)" />
-        <mat-datepicker-toggle matSuffix [for]="inicioPicker"></mat-datepicker-toggle>
-        <mat-datepicker #inicioPicker></mat-datepicker>
+        <mat-label>Estado</mat-label>
+        <mat-select
+          [value]="filtroEstado()"
+          (selectionChange)="filtrarPorEstado($event.value)"
+        >
+          <mat-option value="">Todos</mat-option>
+          <mat-option value="PENDIENTE">Pendiente</mat-option>
+          <mat-option value="COMPLETADA">Completada</mat-option>
+          <mat-option value="ANULADA">Anulada</mat-option>
+          <mat-option value="FALLIDA">Fallida</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Rango de Fecha</mat-label>
+        <mat-date-range-input [rangePicker]="picker">
+          <input
+            matStartDate
+            [value]="fechaInicio()"
+            (dateInput)="filtrarPorFechainicio($any($event.target).value)"
+            placeholder="Start date"
+          />
+          <input
+            matEndDate
+            [value]="fechaFin()"
+            (dateInput)="filtrarPorFechaFin($any($event.target).value)"
+            placeholder="End date"
+          />
+        </mat-date-range-input>
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="picker"
+        ></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
       </mat-form-field>
 
       <mat-form-field appearance="fill" class="tipo-field">
-        <mat-label>Hasta</mat-label>        
-        <input matInput [matDatepicker]="finPicker" [value]="fechaFin()" (dateInput)="fechaFin.set($any($event.target).value)" />
-        <mat-datepicker-toggle matSuffix [for]="finPicker"></mat-datepicker-toggle>
-        <mat-datepicker #finPicker></mat-datepicker>
+        <mat-label>Entidad</mat-label>
+        <mat-icon matPrefix>account_balance</mat-icon>
+        <mat-select
+          [value]="entidadFiltro()"
+          (selectionChange)="filtarPorEntidad($event.value)"
+        >
+          <mat-option value="">Todas</mat-option>
+          @for (entidad of entidades(); track entidad.id) {
+            <mat-option [value]="entidad.id">{{
+              entidad.denominacion
+            }}</mat-option>
+          }
+        </mat-select>
       </mat-form-field>
 
       <div class="filter-actions">
-        <button class="btn bg-primary text-white" (click)="filtrar()">
-          <mat-icon>filter_list</mat-icon>
-          Filtrar
+        <button (click)="loadDatos()" class="btn bg-primary text-white">
+          <mat-icon>search</mat-icon>
+          Buscar
         </button>
         <button class="btn warning-button" (click)="limpiarFiltros()">
           <mat-icon>clear</mat-icon>
@@ -77,8 +117,8 @@
       <div class="stat-card">
         <mat-icon class="stat-icon" style="color: #e65100; background: #fff3e0;">account_balance_wallet</mat-icon>
         <div>
-          <span class="stat-value">{{ saldos().length }}</span>
-          <span class="stat-label">Saldos Activos</span>
+          <span class="stat-value">{{ formatCurrency(totalComision()) }}</span>
+          <span class="stat-label">Comisión Total</span>
         </div>
       </div>
     </div>

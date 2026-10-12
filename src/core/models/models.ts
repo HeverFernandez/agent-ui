@@ -13,6 +13,7 @@ export interface PageResponse<T> {
     sort: { sorted: boolean; orderBy: string[] };
   };
   totalElements: number;
+  totalComision?: number;
   totalPages: number;
   first: boolean;
   last: boolean;
