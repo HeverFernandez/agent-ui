@@ -29,9 +29,6 @@ import {
   TipoOperacion,
   EstadoOperacion,
 } from "../../core/models/models";
-import * as XLSX from "xlsx";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
 import { AlertService } from "../../shared/services/alert.service";
 
 interface ChartData {
@@ -151,6 +148,7 @@ export class ReporteComponent implements OnInit {
     this.pageSize = event.pageSize;
     this.loadDatos();
   }
+
   generarReporte(type: "excel" | "pdf"): void {
     this.operacionService
       .reporteOperaciones(
@@ -165,35 +163,25 @@ export class ReporteComponent implements OnInit {
         },
         type,
       )
-      .subscribe(
-        (response: any) => {
-          if (type === "excel") {
-            const blob = new Blob([response], {
-              type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "reporte_operaciones.xlsx";
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-          }
-          if (type === "pdf") {
-            const doc = new jsPDF();
-            autoTable(doc, { html: "#reporte-table" });
-            doc.save("reporte_operaciones.pdf");
-          }
+      .subscribe({
+        next: (response) => {
+          const url = window.URL.createObjectURL(response);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = `reporte_operaciones.${type === "excel" ? "xlsx" : "pdf"}`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.setTimeout(() => window.URL.revokeObjectURL(url), 1000);
         },
-        (error: any) => {
+        error: () => {
           this._alertService.getAlert(
             "Error",
             "Ocurrió un error al generar el reporte.",
             "error",
           );
         },
-      );
+      });
   }
 
   buildCharts(ops: Operacion[]): void {

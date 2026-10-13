@@ -45,8 +45,8 @@
         </div>
 
         <div class="form-actions">
-          <button class="btn warning-button" type="button" (click)="cancel()">Cancelar</button>
-          <button class="btn primary-button" type="submit" [disabled]="saving()">
+          <button mat-button matButton="elevated" type="button" (click)="cancel()">Cancelar</button>
+          <button mat-raised-button color="primary" matButton="filled" type="submit" [disabled]="saving()">
             @if (saving()) {
               <mat-progress-spinner diameter="20" mode="indeterminate"></mat-progress-spinner>
             } @else {

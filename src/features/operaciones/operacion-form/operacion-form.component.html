@@ -179,11 +179,13 @@
         </mat-form-field>
 
         <div class="form-actions">
-          <button class="btn warning-button" type="button" (click)="cancel()">
+          <button  mat-button matButton="elevated" type="button" (click)="cancel()">
             Cancelar
           </button>
           <button
-            class="btn primary-button"
+            mat-raised-button
+            color="primary"
+            matButton="filled"  
             type="submit"
             [disabled]="saving()"
           >

@@ -4,7 +4,7 @@
       <h1 class="page-title">Operaciones</h1>
       <p class="page-subtitle">Registro y consulta de operaciones bancarias</p>
     </div>
-    <button class="btn primary-button" (click)="crear()">
+    <button mat-raised-button color="primary" matButton="filled" (click)="crear()">
       <mat-icon>add</mat-icon>
       Nueva Operación
     </button>
@@ -78,11 +78,11 @@
       </mat-form-field>
 
       <div class="filter-actions">
-        <button (click)="loadOperaciones()" class="btn bg-primary text-white">
+        <button (click)="loadOperaciones()" mat-raised-button color="primary" matButton="filled">
           <mat-icon>search</mat-icon>
           Buscar
         </button>
-        <button class="btn warning-button" (click)="limpiarFiltros()">
+        <button matButton="tonal" (click)="limpiarFiltros()">
           <mat-icon>clear</mat-icon>
           Limpiar
         </button>
@@ -174,9 +174,8 @@
 
       @if (dataSource.data && dataSource.data.length < 1) {
         <div class="empty-state">
-          <mat-icon>swap_horiz</mat-icon>
           <p>No hay operaciones registradas</p>
-          <button class="btn primary-button" (click)="crear()">
+          <button matFab extended (click)="crear()">
             <mat-icon>add</mat-icon> Registrar primera operación
           </button>
         </div>

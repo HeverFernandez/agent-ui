@@ -66,7 +66,10 @@ export class OperacionService {
     return this.http.delete<ApiResponse<void>>(`/operaciones/${id}`);
   }
 
-  reporteOperaciones(options: OptionsRequest, type: "excel" | "pdf"): any {
+  reporteOperaciones(
+    options: OptionsRequest,
+    type: "excel" | "pdf",
+  ): Observable<Blob> {
     const {
       sortBy = "",
       estado = "",
@@ -89,11 +92,9 @@ export class OperacionService {
       params.tipoOperacion = tipoOperacion;
     if (estadoOperacion && estadoOperacion !== "")
       params.estadoOperacion = estadoOperacion;
-    return this.http.get<ApiResponse<PageResponse<Operacion>>>(
-      `/reportes/operaciones/${type}`,
-      {
-        params,
-      },
-    );
+    return this.http.get(`/reportes/operaciones/${type}`, {
+      params,
+      responseType: "blob",
+    });
   }
 }

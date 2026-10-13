@@ -4,7 +4,7 @@
       <h1 class="page-title">Entidades Bancarias</h1>
       <p class="page-subtitle">Gestión de entidades financieras registradas</p>
     </div>
-    <button class="btn primary-button" (click)="crear()">
+    <button mat-raised-button color="primary" matButton="filled" (click)="crear()">
       <mat-icon>add</mat-icon>
       Nueva Entidad
     </button>
@@ -122,7 +122,6 @@
 
       @if (dataSource.data.length === 0) {
         <div class="empty-state">
-          <mat-icon>account_balance</mat-icon>
           <p>No hay entidades registradas</p>
           <button class="btn primary-button" (click)="crear()">
             <mat-icon>add</mat-icon>

@@ -4,7 +4,7 @@
       <h1 class="page-title">Saldos</h1>
       <p class="page-subtitle">Asignación y gestión de saldos por entidad</p>
     </div>
-    <button (click)="crear()" class="btn primary-button">
+    <button (click)="crear()" mat-raised-button color="primary" matButton="filled">
       <mat-icon>add</mat-icon>
       Asignar Saldo
     </button>
@@ -114,7 +114,6 @@
 
       @if (dataSource.data.length === 0) {
         <div class="empty-state">
-          <mat-icon>account_balance_wallet</mat-icon>
           <p>No hay saldos asignados</p>
           <button class="btn primary-button" (click)="crear()">
             <mat-icon>add</mat-icon>
