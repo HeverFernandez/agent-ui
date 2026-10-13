@@ -66,16 +66,34 @@ export class OperacionService {
     return this.http.delete<ApiResponse<void>>(`/operaciones/${id}`);
   }
 
-  listarPorTipo(
-    tipo: TipoOperacion,
-    page: number = 0,
-    size: number = 10,
-  ): Observable<PageResponse<Operacion>> {
-    const params = new HttpParams()
-      .set("page", page.toString())
-      .set("size", size.toString());
-    return this.http.get<PageResponse<Operacion>>(`/operaciones/tipo/${tipo}`, {
-      params,
-    });
+  reporteOperaciones(options: OptionsRequest, type: "excel" | "pdf"): any {
+    const {
+      sortBy = "",
+      estado = "",
+      direction = "ASC",
+      entidad = "",
+      finicio = "",
+      ffin = "",
+      tipoOperacion = "",
+      estadoOperacion = "",
+    } = options;
+    const params: any = {
+      direction: direction.toUpperCase() || "ASC",
+    };
+    if (sortBy) params.sortBy = sortBy;
+    if (estado && estado !== "All") params.estado = estado;
+    if (entidad && entidad !== "") params.entidad = entidad;
+    if (finicio && finicio !== "") params.finicio = finicio;
+    if (ffin && ffin !== "") params.ffin = ffin;
+    if (tipoOperacion && tipoOperacion !== "")
+      params.tipoOperacion = tipoOperacion;
+    if (estadoOperacion && estadoOperacion !== "")
+      params.estadoOperacion = estadoOperacion;
+    return this.http.get<ApiResponse<PageResponse<Operacion>>>(
+      `/reportes/operaciones/${type}`,
+      {
+        params,
+      },
+    );
   }
 }

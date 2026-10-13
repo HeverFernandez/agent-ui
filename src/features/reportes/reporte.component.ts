@@ -15,8 +15,8 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatNativeDateModule } from "@angular/material/core";
-import { MatTableModule } from "@angular/material/table";
-import { MatPaginatorModule } from "@angular/material/paginator";
+import { MatTableDataSource, MatTableModule } from "@angular/material/table";
+import { MatPaginatorModule, PageEvent } from "@angular/material/paginator";
 import { NgxChartsModule } from "@swimlane/ngx-charts";
 import { OperacionService } from "../../core/services/operacion.service";
 import { EntidadService } from "../../core/services/entidad.service";
@@ -29,7 +29,6 @@ import {
   TipoOperacion,
   EstadoOperacion,
 } from "../../core/models/models";
-import { forkJoin, catchError, of } from "rxjs";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -79,11 +78,12 @@ export class ReporteComponent implements OnInit {
 
   loading = signal(false);
   entidades = signal<EntidadFinanciera[]>([]);
-  operaciones = signal<Operacion[]>([]);
   totalComision = signal<number>(0);
   chartOperacionesPorTipo = signal<ChartData[]>([]);
   chartMontosPorEntidad = signal<ChartData[]>([]);
   chartOperacionesPorEstado = signal<ChartData[]>([]);
+
+  dataSource = new MatTableDataSource<Operacion>([]);
 
   displayedColumns: string[] = [
     "id",
@@ -93,6 +93,11 @@ export class ReporteComponent implements OnInit {
     "estado",
     "fecha",
   ];
+
+  totalElements = 0;
+  pageSize = 10;
+  pageIndex = 0;
+  pageSizeOptions: number[] = [5, 10, 25, 50];
 
   ngOnInit(): void {
     this.loadEntidades();
@@ -110,10 +115,10 @@ export class ReporteComponent implements OnInit {
   loadDatos(): void {
     this.loading.set(true);
 
-    operaciones: this.operacionService
+    this.operacionService
       .listar({
-        page: 0,
-        size: 1000,
+        page: this.pageIndex,
+        size: this.pageSize,
         tipoOperacion: this.filtroTipo(),
         sortBy: this.sortBy(),
         direction: this.direction(),
@@ -123,33 +128,72 @@ export class ReporteComponent implements OnInit {
         entidad: this.entidadFiltro(),
       })
       .subscribe({
-        next: (operaciones) => {
-          let ops: Operacion[] = [];
-          let sld: Saldo[] = [];
+        next: (response) => {
+          this.dataSource.data = response.data.content;
+          this.totalElements = response.data.totalElements;
 
-          if (operaciones) {
-            ops = operaciones.data.content;
-            if (this.fechaInicio() && this.fechaFin()) {
-              ops = ops.filter((o) => {
-                const fecha = o.fecha?.split("T")[0] || "";
-                return fecha >= this.fechaInicio() && fecha <= this.fechaFin();
-              });
-            }
-            if (this.entidadFiltro()) {
-              ops = ops.filter((o) => o.id === +this.entidadFiltro());
-            }
-          }
           this.totalComision.set(
-            ops.reduce((acc, op) => acc + parseFloat(op.comision || "0"), 0),
+            response.data.content.reduce(
+              (acc, op) => acc + parseFloat(op.comision || "0"),
+              0,
+            ),
           );
-          this.operaciones.set(ops);
-          this.buildCharts(ops);
+          this.buildCharts(response.data.content);
           this.loading.set(false);
         },
         error: () => {
           this.loading.set(false);
         },
       });
+  }
+  onPageChange(event: PageEvent): void {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.loadDatos();
+  }
+  generarReporte(type: "excel" | "pdf"): void {
+    this.operacionService
+      .reporteOperaciones(
+        {
+          tipoOperacion: this.filtroTipo(),
+          sortBy: this.sortBy(),
+          direction: this.direction(),
+          finicio: this.fechaInicio(),
+          ffin: this.fechaFin(),
+          estadoOperacion: this.filtroEstado(),
+          entidad: this.entidadFiltro(),
+        },
+        type,
+      )
+      .subscribe(
+        (response: any) => {
+          if (type === "excel") {
+            const blob = new Blob([response], {
+              type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "reporte_operaciones.xlsx";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+          }
+          if (type === "pdf") {
+            const doc = new jsPDF();
+            autoTable(doc, { html: "#reporte-table" });
+            doc.save("reporte_operaciones.pdf");
+          }
+        },
+        (error: any) => {
+          this._alertService.getAlert(
+            "Error",
+            "Ocurrió un error al generar el reporte.",
+            "error",
+          );
+        },
+      );
   }
 
   buildCharts(ops: Operacion[]): void {
@@ -183,86 +227,14 @@ export class ReporteComponent implements OnInit {
     );
   }
 
-  filtrar(): void {
-    this.loadDatos();
-  }
-
   limpiarFiltros(): void {
     this.filtroTipo.set("");
     this.filtroEstado.set("");
     this.entidadFiltro.set("");
     this.fechaInicio.set("");
     this.fechaFin.set("");
+    this.pageIndex = 0;
     this.loadDatos();
-  }
-
-  exportarPDF(): void {
-    if (this.operaciones().length === 0) {
-      this._alertService.getAlert("No hay datos para exportar", "", "warning");
-      return;
-    }
-
-    const doc = new jsPDF();
-    doc.setFontSize(18);
-    doc.text("Reporte de Operaciones - Nuvanta", 14, 20);
-    doc.setFontSize(10);
-    doc.text(
-      `Fecha de generación: ${new Date().toLocaleString("es-ES")}`,
-      14,
-      28,
-    );
-    if (this.fechaInicio() && this.fechaFin()) {
-      doc.text(`Rango: ${this.fechaInicio()} - ${this.fechaFin()}`, 14, 34);
-    }
-
-    const head = [
-      ["ID", "Tipo", "Entidad", "Monto", "Referencia", "Estado", "Fecha"],
-    ];
-    const body = this.operaciones().map((op) => [
-      op.id?.toString() || "",
-      op.tipo,
-      op.entidad || `Entidad #${op.id}`,
-      `S/ ${op.monto.toFixed(2)}`,
-      op.numeroReferencia,
-      op.estado,
-      this.formatDate(op.fecha),
-    ]);
-
-    autoTable(doc, {
-      head,
-      body,
-      startY: 40,
-      theme: "striped",
-      styles: { fontSize: 8 },
-    });
-    doc.save("reporte-operaciones.pdf");
-    this._alertService.getAlert("PDF exportado correctamente", "", "success");
-  }
-
-  exportarExcel(): void {
-    if (this.operaciones().length === 0) {
-      this._alertService.getAlert("No hay datos para exportar", "", "warning");
-      return;
-    }
-
-    const data = this.operaciones().map((op) => ({
-      ID: op.id,
-      Tipo: op.tipo,
-      Entidad: op.entidad,
-      Monto: op.monto,
-      Referencia: op.numeroReferencia,
-      Descripción: op.descripcion,
-      Estado: op.estado,
-      "Servicio Pagado": "...",
-      Usuario: "...",
-      Fecha: this.formatDate(op.fecha),
-    }));
-
-    const ws = XLSX.utils.json_to_sheet(data);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Operaciones");
-    XLSX.writeFile(wb, "reporte-operaciones.xlsx");
-    this._alertService.getAlert("Excel exportado correctamente", "", "success");
   }
 
   formatCurrency(value: number): string {
@@ -294,7 +266,7 @@ export class ReporteComponent implements OnInit {
   }
 
   getTotalMonto(): number {
-    return this.operaciones().reduce((sum, op) => sum + op.monto, 0);
+    return this.dataSource.data.reduce((sum, op) => sum + op.monto, 0);
   }
 
   filtrarPorTipo(tipo: TipoOperacion): void {
